@@ -1,5 +1,61 @@
 # Deployment checklist
 
+## Vercel — frontend demonstration deploy
+
+The current build is a **frontend-only demonstration**. It renders representative
+data and needs **no backend, no database and no environment variables**. Nothing
+under `app/` imports `db/` or `worker/`, so the Cloudflare Worker and D1 pieces
+are not part of this deploy.
+
+### Importing the repo
+
+Vercel needs no dashboard configuration beyond connecting the repo —
+`vercel.json` carries everything:
+
+```json
+{
+  "installCommand": "npm install -g npm@11 && npm ci",
+  "buildCommand": "npm run build:vercel"
+}
+```
+
+Two things about that file are load-bearing:
+
+- **No `outputDirectory`.** `npm run build:vercel` runs Vite with the Nitro
+  plugin (`vite.config.ts` switches to it when `process.env.VERCEL` is set),
+  which emits the **Build Output API v3** layout at `.vercel/output`. Vercel
+  detects that automatically. An earlier `"outputDirectory": ".output"` pointed
+  at a directory this build never creates, which would have failed the deploy
+  with "No Output Directory found".
+- **The npm pin is required, not cosmetic.** Vercel's default Node 22 ships
+  npm 10, and npm 10 cannot read this lockfile — it fails with
+  `Missing: lru-cache@… from lock file`, because an alpha `unstorage` reached
+  through `nitro` declares it as an optional peer. Verified directly:
+  `npm@10 ci` errors, `npm@11 ci` installs 492 packages. Same reason CI pins
+  npm 11.
+
+### Environment variables
+
+**None.** `app/` contains no `process.env` reference. `.env.example` describes
+the variables a future production build will need; none are read today.
+
+### Verifying a build locally
+
+```bash
+VERCEL=1 npm run build:vercel
+PORT=4321 npx nitro preview
+```
+
+Last verified against the real artifact: all six routes return 200, `/team`
+renders 8 cards with load labels (1 Busy / 4 Medium / 3 Light), `/clients`
+renders 8 collaborator stacks, and static assets resolve.
+
+### What is deliberately not deployed
+
+`worker/index.ts`, `db/`, `database/` and `drizzle/` are for the Cloudflare
+runtime and are untouched by the Vercel path. They stay in the repo for the
+production build described in the rest of this checklist.
+
 ## Before staging
 
 - [ ] Choose production auth, Postgres, queue/cache, worker, email, KMS, and monitoring providers.
