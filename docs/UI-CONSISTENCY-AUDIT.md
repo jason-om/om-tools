@@ -891,3 +891,63 @@ Lint, `tsc --noEmit`, 6/6 tests. All five horizons (Day, Week, Month, Quarter,
 Year) swept for any element whose content exceeds its box: **zero**, in light
 and dark. The only match is `.sr-only`, which is deliberately 1px for screen
 readers.
+
+
+---
+
+# Functionality audit (2026-08-24)
+
+Full click-through of every page after the styling work, plus a rendered-link
+safety sweep.
+
+## Fixed
+
+**5 external links on `/` had no `target="_blank"`** and navigated away in the
+same tab: the two quick-search recents (Asana task, Slack channel), the client
+chooser rows, the Later / Quieter items, and the Upcoming This Week items. All
+now open in a new tab. `rel` was also normalised from `noreferrer` to
+`noopener noreferrer` to match the other three pages — `noreferrer` already
+implies `noopener`, so that part is consistency, not a security fix.
+
+Rendered-link sweep now clean across all pages: **64 external links, every one
+`target="_blank"` with `rel`**. Counted from the live DOM rather than the
+source, because `/clients`, `/team` and `/tools` build hrefs from helpers
+(`asanaUrl()`, `slackUrl()`) that a source grep misses.
+
+## Confirmed working
+
+| Page | Verified |
+|---|---|
+| `/` | All 5 modals (search, meeting, client, notifications, profile), ⌘K, Esc-to-close, 5 horizon tabs, theme toggle, sidebar collapse |
+| `/clients` | My/OM scope switch, Cards/List, both filters, search |
+| `/team` | Cards/Columns/List, department filter, search |
+| `/tools` | Grid/Cards/List, department filter, all 3 sort modes, search |
+| shell | 4 live nav links; 5 "coming soon" correctly `aria-disabled` |
+| `/auth` | Email step advances to verification |
+
+## Not regressions — pre-existing gaps
+
+The report that "the avatar used to open a modal" was investigated. On `/` the
+profile modal **works**. On `/clients`, `/team` and `/tools` the profile and
+notification buttons have no `onClick` at all, and `app/page.tsx`,
+`app/clients/page.tsx` and `app/tools/page.tsx` were **never modified** during
+the styling work — only `app/layout.tsx` and `app/team/page.tsx` were. These are
+audit findings 3 and 4, recorded before any styling change was made.
+
+Still open on those three pages: inert profile button, inert notification bell,
+and a ⌘K hint with no handler.
+
+## Testing note
+
+The sidebar collapse first appeared broken — the class toggled but the width
+stayed put. It is not broken. `document.visibilityState` is `hidden` for the
+automation pane, so CSS transitions never advance and computed styles freeze at
+their start value. With transitions disabled the collapse measures 228 → 74 →
+228 correctly. **Any future measurement of a transitioned property in this
+environment must disable transitions first**, or it will report a false failure.
+
+## Minor, unfixed
+
+`/admin/access` sidebar nav items are anchors with no `href`, so they are not
+keyboard-focusable, and the Deny / Review buttons are static. That page is a
+representative prototype; noted rather than changed.

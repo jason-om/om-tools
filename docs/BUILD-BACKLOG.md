@@ -103,6 +103,66 @@ each item.
   CSS), 12 (breakpoints diverging above 980px), 13 (one icon for two nav
   destinations, inconsistent view-switcher labels).
 
+## 12. Clients Dashboard — guest-access friendly (next dev cycle)
+
+**Title:** Build Clients Dashboard (Guest-Access Friendly + Onboarding Selection)
+
+Create a new Clients Dashboard that works with the reality that every OM only
+has Guest Access in Asana.
+
+### Core concept
+
+Because formal ownership/lead fields are not reliably visible to Guests, use a
+hybrid model:
+
+1. **Onboarding / settings selection.** During onboarding (or in a simple
+   settings page), the IC can mark clients as:
+   - "I own this client"
+   - "I am a regular collaborator"
+2. **Automatic inclusion via task assignment.** Any client/project where a task
+   is currently or recently assigned to the IC must automatically appear in
+   their dashboard — even if they never selected it.
+
+### Hierarchy to display
+
+1. **My Clients (Owner)** — clients the IC explicitly marked as owner
+2. **My Collaborator Clients** — clients marked as regular collaborator, plus
+   any client with current/recent task assignments
+3. **Recently Assigned / Active** — clients that only appear because of task
+   assignments
+
+### Data and display rules
+
+- Primary data source: **Asana**
+- Preserve the existing client naming style where possible (client name + tooth
+  emoji + date + associated person)
+- Show for each client: client name (existing naming pattern), relationship
+  type (Owner / Collaborator / Recently Assigned), recent interaction or last
+  relevant activity summary, high-level status if available, and an external
+  link to the Asana project (must open in a new tab)
+- Support **Card view** and **List view** (optionally a simple grouped view by
+  hierarchy)
+- Search and filter by hierarchy level, client name, and recent activity
+
+### Mandatory rules
+
+- Follow the **current design styling** exactly — colours, typography, spacing,
+  cards, buttons, toggles. See the type scale and hierarchy rules in
+  `CONTRIBUTING.md` and `docs/UI-CONSISTENCY-AUDIT.md`.
+- Any link to a third-party tool (Asana) must be an **external link** opening in
+  a new tab.
+- Keep language neutral and professional. Do not surface productivity or
+  monitoring-style metrics.
+- Do not try to reverse-engineer formal Project Owner / Lead from Asana Guest
+  data.
+
+### Out of scope for this version
+
+- Full CRM features
+- Financial data
+- Embedding Asana interfaces
+- Slack or calendar data
+
 ## Recommended sequence
 
 1. Production auth, database, and Google Calendar connector.
