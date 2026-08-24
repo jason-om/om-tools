@@ -1,0 +1,99 @@
+# Contributing to OM One
+
+This is an internal Grow With OM repository. It is not open to outside
+contributors.
+
+## Before you start
+
+Read [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for how the app is put
+together and [`docs/BUILD-BACKLOG.md`](docs/BUILD-BACKLOG.md) for what is
+already planned. Most work should map to a backlog item.
+
+## Setup
+
+Node 22.13 or newer is required (`engines.node` in `package.json`).
+
+```bash
+npm ci
+cp .env.example .env.local
+npm run dev
+```
+
+The dev server runs at http://localhost:3000. `.env*` is gitignored — real
+values belong in the host secret manager, never in the repo.
+
+## The four commands
+
+Run all four before opening a PR. CI runs the same set on every PR and push
+to `main`.
+
+```bash
+npm run lint
+npx tsc --noEmit
+npm test
+npm run build
+```
+
+`npm test` builds first and then asserts that all six routes server-render, so
+it covers the build too. `npm run build` is listed separately only because it
+is the faster loop when you are iterating on a build error.
+
+## Branches and commits
+
+Branch off `main`. Name branches for the work: `feature/...`, `fix/...`,
+`chore/...`.
+
+Write commit subjects in the imperative and under ~72 characters. Explain
+**why** in the body when the diff does not make it obvious. Keep commits
+atomic — one logical change each.
+
+## Working on the UI
+
+The dashboard uses the Grow With OM visual system. Two rules matter most:
+
+**Use the existing tokens.** The palette lives in `:root` in
+`app/globals.css` as `--om-*`. Do not introduce a raw hex when a token already
+carries that colour, and do not add a near-duplicate of a colour that already
+exists. One deliberate exception: `#fff` stays literal on the dark-blue
+surfaces, because `--om-surface` inverts in dark mode.
+
+**Reuse existing classes.** Before adding a class, check whether one already
+does the job. `.clients-heading`, `.team-heading`, and `.tools-heading` are a
+cautionary example — three byte-identical blocks under three names in three
+files.
+
+Every UI change must be checked in **both light and dark mode**, and layout
+changes at **1440px and 680px**. The shared breakpoints are 680px and 980px.
+
+[`docs/UI-CONSISTENCY-AUDIT.md`](docs/UI-CONSISTENCY-AUDIT.md) records the
+known consistency debt and which items are already fixed. Read it before a
+large UI change so you do not re-introduce something that was just removed.
+
+## Where things live
+
+| Path | What it holds |
+|---|---|
+| `app/` | Routes, page components, and their CSS |
+| `app/globals.css` | Design tokens and every shared style |
+| `worker/` | Cloudflare Worker entry point |
+| `db/`, `database/`, `drizzle/` | Schema and migrations |
+| `docs/` | Architecture, security, deployment, integrations, backlog |
+| `tests/` | Render tests run by `npm test` |
+
+Page-specific CSS goes in the page's own file (`app/clients/clients.css`).
+Anything used by more than one page goes in `app/globals.css`. Do not define
+the same selector in both — `tools.css` did, and the override was invisible
+until it was audited.
+
+## Data and security
+
+- Never call provider APIs from the browser. The server owns OAuth exchanges
+  and refresh.
+- Never commit real client data, calendar contents, Slack messages, or Asana
+  task text — including in screenshots attached to issues and PRs.
+- Read [`docs/AUTH-SECURITY.md`](docs/AUTH-SECURITY.md) before touching auth,
+  sessions, connectors, or anything that stores a token.
+
+## Reporting security issues
+
+See [`SECURITY.md`](SECURITY.md). Do not open a public issue.

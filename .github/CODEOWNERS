@@ -1,0 +1,13 @@
+# Every PR requires review from the repository owner by default.
+*                       @jason-om
+
+# Design system and shared shell — changes here affect every page.
+/app/globals.css        @jason-om
+/app/layout.tsx         @jason-om
+
+# Security, auth, and deployment posture.
+/docs/AUTH-SECURITY.md  @jason-om
+/docs/DEPLOYMENT.md     @jason-om
+/worker/                @jason-om
+/db/                    @jason-om
+/database/              @jason-om

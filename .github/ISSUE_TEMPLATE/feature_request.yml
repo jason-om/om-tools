@@ -1,0 +1,35 @@
+name: Feature or change request
+description: Propose something OM One should do that it does not do today.
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: Describe the situation for the person using OM One, not the solution.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you would like to happen
+    validations:
+      required: true
+
+  - type: dropdown
+    id: backlog
+    attributes:
+      label: Does this already appear in docs/BUILD-BACKLOG.md?
+      options:
+        - "Yes — this is a backlog item"
+        - "No — this is new"
+        - "Not sure"
+    validations:
+      required: true
+
+  - type: textarea
+    id: sources
+    attributes:
+      label: Data sources involved
+      description: Google Calendar, Slack, Asana, or none. Note if this needs a new scope or permission.

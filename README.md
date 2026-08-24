@@ -98,3 +98,24 @@ npm run lint
 - `/team` — all OM employees directory
 - `/auth` — authentication and outside-domain request experience
 - `/admin/access` — superadmin access queue
+
+## Working in this repository
+
+Node 22.13 or newer.
+
+```bash
+npm ci
+cp .env.example .env.local
+npm run dev
+```
+
+Before opening a PR, run `npm run lint`, `npx tsc --noEmit`, and `npm test`.
+CI runs the same three on every pull request and every push to `main`.
+
+- [`CONTRIBUTING.md`](CONTRIBUTING.md) — setup, branch and commit conventions,
+  and the UI rules (use the existing `--om-*` tokens, reuse existing classes,
+  check light and dark).
+- [`SECURITY.md`](SECURITY.md) — how to report a vulnerability. Do not open a
+  public issue for one.
+- [`docs/UI-CONSISTENCY-AUDIT.md`](docs/UI-CONSISTENCY-AUDIT.md) — known design
+  system debt and what has already been fixed.

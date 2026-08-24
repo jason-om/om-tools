@@ -1,0 +1,63 @@
+name: Bug report
+description: Something in OM One behaves incorrectly.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please do not paste real client data, calendar contents, Slack
+        messages, tokens, or screenshots containing them. Redact first.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Dashboard (Overview)
+        - Clients
+        - Team
+        - Tools
+        - Auth (/auth)
+        - Superadmin (/admin/access)
+        - Shell (sidebar, topbar, theme)
+        - Build or tooling
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to /clients
+        2. Switch to List view
+        3. ...
+    validations:
+      required: true
+
+  - type: input
+    id: viewport
+    attributes:
+      label: Viewport and theme
+      placeholder: "1440px, dark mode"
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and OS
+      placeholder: "Chrome 128, macOS 15"
