@@ -856,3 +856,38 @@ cursor. `.open-link` is used only by `/`, so no other page is affected.
 
 Still outstanding: the `.focus-card` renders light in dark mode — audit finding
 8, unchanged by this work.
+
+
+---
+
+# Week view event blocks were clipping (2026-08-24)
+
+Two faults in `.week-event`, both hidden behind `overflow:hidden`.
+
+## Every 30-minute block clipped by a few pixels
+
+A 30-minute block is 46px. Padding took 14px, leaving 32px of content. The
+title needed 17.5px (14px at line-height 1.25), the gap 4px, and the meta line
+15px — **36.5px into 32px**. Every short event lost the bottom few pixels of
+"9:00 AM · Google Calendar", which is the sliced-off text in the report.
+
+Fixed by tightening padding 7px→5px, the gap 4px→2px, and both line-heights to
+1.2. Content now needs 33.2px in 36px available.
+
+## Long titles evicted the meta line entirely
+
+"The Practice — Client Review" wrapped to two lines (35px), pushing the meta
+out of the box completely — measured `metaH: 0`, `scrollHeight` 53 against a
+46px block.
+
+The title is now a single line with `text-overflow:ellipsis`, and the meta is
+`flex:0 0 auto` so it can never be the element that gets squeezed. A truncated
+title in a narrow day column is normal calendar behaviour; a missing timestamp
+is not.
+
+## Verification
+
+Lint, `tsc --noEmit`, 6/6 tests. All five horizons (Day, Week, Month, Quarter,
+Year) swept for any element whose content exceeds its box: **zero**, in light
+and dark. The only match is `.sr-only`, which is deliberately 1px for screen
+readers.
