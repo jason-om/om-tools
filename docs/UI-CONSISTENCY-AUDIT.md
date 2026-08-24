@@ -795,3 +795,64 @@ than presentation and was not part of this change.
 Lint, `tsc --noEmit`, 6/6 tests. Cards, Columns and List checked at 1440x900
 and 680x900 in light and dark: zero overflowing elements, no horizontal scroll,
 and all 8 timezone footers render on a single line in every view.
+
+
+---
+
+# Overview weight and colour balance (2026-08-24)
+
+Measured before touching anything: **38% of text on `/` was weight 700 or
+heavier**, and **21 elements were cobalt**. A dense dashboard reads calm at
+roughly 10-15% heavy.
+
+## Where the weight was
+
+32 of the 61 heavy elements were list-item titles, all at 14/700 — every row of
+every panel at maximum weight, so no row could lead:
+
+| Selector | Count |
+|---|---|
+| `.quiet-list b` / `.upcoming-list b` | 9 |
+| `.project-row b` | 7 |
+| `.item-copy>b` | 6 |
+| `.mention-item b` | 5 |
+| `.schedule-row b` | 5 |
+
+All moved to **600**, which keeps them clearly above the 400-500 meta and
+matches what `/clients` and `/team` already use for list titles. The panel
+titles stay at 12/700 — they are small section labels, not competing body text.
+
+## Where the colour was
+
+15 of the 21 cobalt elements were the same thing: the `Open ↗` link, repeated
+on every row. Colour that appears on every row cannot signal anything.
+
+`.open-link` is now `--om-muted` at rest and turns cobalt on row hover, link
+hover, or keyboard focus, via
+`.work-item:hover .open-link, .mention-item:hover .open-link, .schedule-row:hover .open-link, .open-link:hover, .open-link:focus-visible`.
+Colour now marks the row you are on. The five panel-level "View all" buttons
+keep their cobalt — one per panel is a signal, fifteen was wallpaper.
+
+## Horizon tabs
+
+All five tabs were 14/600 with the active one distinguished only by colour and
+a tinted pill. Inactive tabs now sit at `--om-muted` 500 and the active one
+takes 600, so the active state reads from weight as well as colour and the
+whole control recedes.
+
+## Result
+
+| | Before | After |
+|---|---|---|
+| Weight 700+ | 61 (38%) | 30 (19%) |
+| …excluding 5.5px glyph marks | — | **18 (11%)** |
+| Cobalt elements | 21 | 6 |
+
+## Verification
+
+Lint, `tsc --noEmit`, 6/6 tests. Light and dark, zero overflowing elements, no
+horizontal scroll. Hover confirmed to restore cobalt on the row under the
+cursor. `.open-link` is used only by `/`, so no other page is affected.
+
+Still outstanding: the `.focus-card` renders light in dark mode — audit finding
+8, unchanged by this work.
