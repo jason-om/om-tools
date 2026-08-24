@@ -753,3 +753,45 @@ the number leads rather than the qualifier.
 Lint, `tsc --noEmit`, 6/6 tests. Cards, Columns and List checked in light and
 dark: zero overflowing elements, no horizontal scroll, no wrapped time labels,
 rendered steps [10, 12, 13, 14, 16, 32]. Brace balance verified.
+
+
+---
+
+# Timezones moved to the card footer on /team (2026-08-24)
+
+The timezone pair sat in the avatar column at the top of each card, which gave
+FYI context the most prominent position in the layout and forced the avatar
+column to 72px for a 43px avatar.
+
+It is now a single quiet line at the bottom of the card:
+
+`3:08 PM Local · MT    5:08 PM OM · ET`
+
+## Changes
+
+- `app/team/page.tsx`: the block moves out of `PersonHead` into a `<footer>` in
+  `EmployeeCard`. `PersonHead` no longer takes `now`, since only the footer
+  needs it.
+- `.avatar-times` renamed to `.card-timezones` — the old name described a
+  position that no longer exists.
+- `.person-avatar-stack` deleted; with the times gone it wrapped a single
+  avatar.
+- The avatar column reverts to the avatar's own width across all three card
+  variants: 72→43px, 60→37px, 62→40px. Those widths only existed to fit the
+  times.
+- Layout changes from a vertical grid to a horizontal flex row with a hairline
+  top border, `margin-top:auto` so it pins to the card bottom regardless of how
+  many events the person has.
+
+## Worth revisiting
+
+3 of the 8 people are in ET, so their footer reads "5:08 PM Local · ET" and
+"5:08 PM OM · ET" — the same time twice. Rendering the local time only when it
+differs from OM would remove that redundancy, but it changes behaviour rather
+than presentation and was not part of this change.
+
+## Verification
+
+Lint, `tsc --noEmit`, 6/6 tests. Cards, Columns and List checked at 1440x900
+and 680x900 in light and dark: zero overflowing elements, no horizontal scroll,
+and all 8 timezone footers render on a single line in every view.
