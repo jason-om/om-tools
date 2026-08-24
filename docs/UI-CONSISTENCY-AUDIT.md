@@ -607,3 +607,56 @@ tier to match the client column's owner line.
 Lint, `tsc --noEmit`, 6/6 tests. Card, List, My Clients and OM Clients scopes
 all checked: zero overflowing elements, no horizontal scroll, rendered steps
 [10, 12, 13, 14, 16, 18, 32]. Brace balance verified.
+
+
+---
+
+# FYI rail de-emphasis on /clients (2026-08-24)
+
+`.client-group.secondary` — the "Clients I Support" and "Recent Interactions"
+rail — is FYI context by design, but was only quieter than the primary My
+Clients section on 3 of 9 measured elements, and on one it was **louder**.
+
+## Before
+
+| Element | My Clients | FYI rail |
+|---|---|---|
+| Section title | 14/800 | 14/800 — identical |
+| Client name | 18/700 | 14/700 |
+| Activity eyebrow | 10/800 | **12/800 — larger than primary** |
+| Activity text | 14/400 | 13/400 |
+| Status pill | 12/700 saturated | 12/700 saturated — identical |
+| Asana action | 12/600 filled button | 12/600 filled button — identical |
+
+The eyebrow inversion was self-inflicted: the previous commit dropped the
+primary section's eyebrow to 10px and missed the rail's.
+
+## After
+
+Every element now steps down:
+
+| Element | My Clients | FYI rail |
+|---|---|---|
+| Section title | 14/800 | 12/800 |
+| Section sub | 13/400 | 12/400 |
+| Client name | 18/700 | 14/700 |
+| Identity mark | 14/800 | 10/800 at 78% opacity |
+| Activity eyebrow | 10/800 | 10/700 |
+| Activity text | 14/400 dark | 12/400 muted |
+| Status pill | 12/700 | 10/600 at 75% opacity |
+| Asana action | 12/600 filled | 12/500 borderless text link |
+
+The eyebrow holds at 10px in both because 10 is the micro floor; it steps down
+by weight instead.
+
+Two changes carry most of the effect. The rail's Asana action loses its border
+and fill, so the filled button now reads as belonging to the primary cards
+only. And the status pills drop to 75% opacity — still legible as state, no
+longer a saturated signal pulling the eye into the FYI column.
+
+## Verification
+
+Lint, `tsc --noEmit`, 6/6 tests. Zero overflowing elements and no horizontal
+scroll, light and dark. Both `.secondary` groups confirmed to receive the
+treatment. Comparison measured from computed styles per element, main against
+rail.
