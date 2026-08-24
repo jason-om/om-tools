@@ -564,3 +564,46 @@ scroll on any page at 1440x900 or 680x900, light and dark. Rendered steps per
 page now read [8, 10, 12, 13, 14, 16, 26] on the dashboard and
 [10, 12, 13, 14, 16, 18, 32] on the list pages. CSS brace balance verified
 after each scripted edit.
+
+
+---
+
+# Container-relative hierarchy on /clients (2026-08-24)
+
+The global tiers were right, but several elements were sized for their type
+rather than for their role *inside their container*. The recurring fault: a
+container's own label rendered at the same size and weight as the content it
+labels.
+
+## Card container
+
+Before, five things on a client card sat at 700 weight, three of them within
+1px of each other. The card now has one lead and a clean descent:
+
+| | Role | Was | Now |
+|---|---|---|---|
+| 1 | Client name | 18/700 | 18/700 |
+| 2 | Stat number | 18/700 | **16/700** — was tied with the client name |
+| 3 | Priority callout | 14/700 | 14/700 |
+| 4 | Glance item title | 13/700 | **13/600** |
+| 5 | Owner line | 13/400 | **12/400** — also stops it wrapping to two lines |
+| 6 | Project chip | 12/700 text | **12/600 muted** — was a second headline |
+| 7 | "AT A GLANCE" label | **13/700 dark** | **10/800 muted uppercase** |
+
+The last one was the worst: the section label was styled identically to the
+task titles beneath it, so the container competed with its own contents. It now
+matches the eyebrow pattern already used by "HIGH PRIORITY" and "RECENT ASANA
+ACTIVITY", and its "3 of 6" counter drops to the same 10px step.
+
+## List container
+
+Each row had **three** elements at 14/700 — client name, relationship, and
+recent activity — so no row had a lead. The client name owns the row; the other
+two are its attributes and now sit at 13/600, with row meta joining the 12px
+tier to match the client column's owner line.
+
+## Verification
+
+Lint, `tsc --noEmit`, 6/6 tests. Card, List, My Clients and OM Clients scopes
+all checked: zero overflowing elements, no horizontal scroll, rendered steps
+[10, 12, 13, 14, 16, 18, 32]. Brace balance verified.
