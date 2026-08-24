@@ -951,3 +951,65 @@ environment must disable transitions first**, or it will report a false failure.
 `/admin/access` sidebar nav items are anchors with no `href`, so they are not
 keyboard-focusable, and the Deny / Review buttons are static. That page is a
 representative prototype; noted rather than changed.
+
+
+---
+
+# App shell moved into the layout (2026-08-24)
+
+Closes audit findings **2, 3 and 4** in one change, and removes the duplication
+that caused them.
+
+## What moved
+
+`app/shell.tsx` (new) owns the sidebar, topbar, all six modals, and the
+`dark` / `collapsed` / `modal` state. `app/layout.tsx` wraps every page in it.
+`app/shared.tsx` (new) holds `Provider` and the representative client list, so
+the shell and Overview share one copy instead of two.
+
+All four dashboard pages dropped their private shell and now render only their
+own body. Page code went **73,069 → 58,242 bytes**; with the new shell and
+shared module the total is **69,411 bytes, still 3,658 smaller** — and the
+shell exists once rather than four times.
+
+## What this fixes
+
+- **Finding 2 — theme and sidebar reset on navigation.** Both now persist via
+  `localStorage`, read through `useSyncExternalStore` to match the
+  view-preference pattern already used on `/team` and `/clients`. Verified:
+  toggle dark and collapse on `/`, navigate to `/clients`, and both hold.
+- **Finding 3 — ⌘K hint with no handler.** The shortcut is now global. On
+  Overview it opens quick search; on the three pages with an inline search box
+  it focuses that box.
+- **Finding 4 — inert profile and notification buttons** on `/clients`,
+  `/team` and `/tools`. Both now open the same modals Overview always had.
+
+## Design notes
+
+- **Route-driven, not prop-driven.** The layout cannot receive per-page props,
+  so the shell derives everything from `usePathname()`: which nav item is
+  active, whether the topbar shows a search *button* (Overview) or a live
+  *input*, that input's placeholder, and the wrapper class.
+- **Search state lives in the shell, filtering stays in the page.** Pages read
+  it with `useShellQuery()`. The query is keyed by route, so a filter never
+  follows you to the next page and no effect is needed to clear it.
+- **`useShellModal()`** lets a page open a shell modal — Overview's sync bar is
+  the only caller.
+- **`/auth` and `/admin/access` are in `BARE_ROUTES`** and render with no shell
+  chrome at all, because they have their own full-page layouts.
+
+## A latent bug this exposed
+
+With the theme now persisting, `/auth` became reachable in dark mode for the
+first time — and its OM logo was invisible, because the light/dark logo swap
+was scoped to `.om-brand` (the shell) while `/auth` uses `.auth-brand` with
+only the light-theme asset. The swap now covers both, and `/auth` carries both
+logo images like the shell does.
+
+## Verification
+
+Lint, `tsc --noEmit`, 6/6 render tests. Every control exercised in the browser:
+all 6 modals, ⌘K on all four pages, Escape-to-close, 5 horizon tabs, theme
+toggle, sidebar collapse, and each page's own view switches, filters, sorts and
+search. `/auth` and `/admin/access` confirmed shell-free in both themes. Zero
+overflow, no horizontal scroll.

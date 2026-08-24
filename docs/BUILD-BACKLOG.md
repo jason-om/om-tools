@@ -81,12 +81,8 @@ Requests is marked Coming Soon in the primary sidebar; the authentication and su
 Carried over from `docs/UI-CONSISTENCY-AUDIT.md`, which has the evidence for
 each item.
 
-- **Move the app shell into `app/layout.tsx`.** The sidebar and topbar are
-  duplicated across all four dashboard pages, and `dark` / `collapsed` are
-  per-page `useState` with no persistence. Toggling dark mode and navigating
-  drops you back to light. One change resolves audit findings 2, 3, and 4:
-  the reset theme, the `⌘K` hint that only works on Overview, and the
-  notification and profile buttons that are inert on Clients, Team, and Tools.
+- ~~**Move the app shell into `app/layout.tsx`.**~~ Done 2026-08-24. See
+  `docs/UI-CONSISTENCY-AUDIT.md`. Closed audit findings 2, 3 and 4.
 - **Close the dark-mode gaps.** `team.css` hardcodes 15 colours and has zero
   `[data-theme=dark]` overrides; the `.focus-card` on Overview still renders
   light in dark mode. Audit finding 8.

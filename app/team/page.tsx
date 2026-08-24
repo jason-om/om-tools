@@ -1,11 +1,9 @@
 "use client";
+import { useShellQuery } from "../shell";
 
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
-import Image from "next/image";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import {
-  Bell, CalendarDays, ChevronDown, ChevronLeft, Columns3, FileBarChart,
-  FileStack, Grid2X2, LayoutGrid, Link2, List, MessageSquare, Moon,
-  PlusSquare, Search, Settings, Sun, Users, Wrench,
+  CalendarDays, Columns3, LayoutGrid, List, MessageSquare, Users
 } from "lucide-react";
 import "./team.css";
 
@@ -62,29 +60,18 @@ function EmployeeCard({employee,now,compact=false}:{employee:Employee;now:Date;c
 function EmployeeList({items,now}:{items:Employee[];now:Date}){return <section className="employee-list" aria-label="All OM employees list"><header><span>Employee</span><span>Time zones</span><span>Today’s OM calendar</span><span>Schedule context</span><span>Contact</span></header>{items.map(employee=>{const key=scheduleKey(employee.omEvents);return <article key={employee.name}><div><span className={`employee-avatar ${employee.tone}`}>{employee.initials}</span><span><b>{employee.name}</b><small>{employee.title} · {employee.department}</small></span></div><div className="list-times"><span><b suppressHydrationWarning>{displayTime(now,employee.timeZone)}</b> local</span><small>{employee.timeZoneLabel}</small><span><b suppressHydrationWarning>{displayTime(now,OM_TIME_ZONE)}</b> OM</span></div><div className="list-events">{employee.omEvents.length?employee.omEvents.map(event=><span key={`${event.time}-${event.title}`}><time>{event.time}</time>{event.title}</span>):<span>No OM events today</span>}</div><p>{scheduleCopy[key]}</p><a className="slack-dm" href={slackUrl(employee.slackUserId)} target="_blank" rel="noopener noreferrer"><MessageSquare size={15}/>Slack DM</a></article>})}</section>}
 
 export default function TeamPage(){
-  const [dark,setDark]=useState(false);
-  const [collapsed,setCollapsed]=useState(false);
+  const {query}=useShellQuery();
   const view=useSyncExternalStore(subscribeToViewPreference,getViewPreference,getServerViewPreference);
   const [group,setGroup]=useState<GroupMode>("department");
   const [department,setDepartment]=useState("All departments");
-  const [query,setQuery]=useState("");
   const [now]=useState(()=>new Date());
-  useEffect(()=>{document.documentElement.dataset.theme=dark?"dark":"light"},[dark]);
   const departments=["All departments",...Array.from(new Set(employees.map(employee=>employee.department)))];
   const visibleEmployees=useMemo(()=>employees.filter(employee=>(department==="All departments"||employee.department===department)&&`${employee.name} ${employee.title} ${employee.department}`.toLowerCase().includes(query.toLowerCase())).sort((a,b)=>a.name.localeCompare(b.name)),[department,query]);
   const groups=useMemo(()=>{const grouped=new Map<string,Employee[]>();visibleEmployees.forEach(employee=>{const key=group==="department"?employee.department:scheduleKey(employee.omEvents);grouped.set(key,[...(grouped.get(key)||[]),employee])});return [...grouped.entries()]},[group,visibleEmployees]);
 
-  return <div className={`om-dashboard team-dashboard ${collapsed?"sidebar-collapsed":""}`}>
-    <aside className="om-sidebar"><div className="om-brand"><Image className="logo-light" src="/om-logo-light.svg" alt="OM" width={44} height={30}/><Image className="logo-dark" src="/om-logo-dark.svg" alt="OM" width={44} height={30}/><span>OM One</span></div><nav>
-      <a href="/"><Grid2X2/><span>Overview</span></a><a href="/clients"><Users/><span>Clients</span></a><a className="active" href="/team"><Users/><span>Team</span></a><a href="/tools"><Wrench/><span>Tools</span></a><a className="nav-coming" href="#reports" aria-disabled="true" onClick={event=>event.preventDefault()}><FileBarChart/><span>Reports</span><em>Coming Soon</em></a><a className="nav-coming" href="#resources" aria-disabled="true" onClick={event=>event.preventDefault()}><FileStack/><span>Resources</span><em>Coming Soon</em></a>
-      <p>MANAGE</p><a className="nav-coming" href="#requests" aria-disabled="true" onClick={event=>event.preventDefault()}><PlusSquare/><span>Requests</span><em>Coming Soon</em></a><p>SETTINGS</p><a className="nav-coming" href="#integrations" aria-disabled="true" onClick={event=>event.preventDefault()}><Link2/><span>Integrations</span><em>Coming Soon</em></a><a className="nav-coming" href="#settings" aria-disabled="true" onClick={event=>event.preventDefault()}><Settings/><span>Settings</span><em>Coming Soon</em></a>
-    </nav><div className="sidebar-profile"><span className="profile-photo">JM</span><div><b>Jason M.</b><small>View profile →</small></div></div><button className="collapse-button" onClick={()=>setCollapsed(!collapsed)} aria-label="Collapse sidebar"><ChevronLeft size={19}/></button></aside>
-    <main className="om-main"><header className="om-topbar"><label className="top-search team-search"><Search size={20}/><input value={query} onChange={event=>setQuery(event.target.value)} placeholder="Search the OM team…"/><kbd>⌘K</kbd></label><div className="top-actions"><button className="round-button" onClick={()=>setDark(!dark)} aria-label="Toggle theme">{dark?<Sun size={19}/>:<Moon size={19}/>}</button><button className="notification-button" aria-label="Notifications"><Bell size={20}/><i>3</i></button><button className="top-profile"><span>JM</span><div><b>Jason M.</b><small>IC Workspace</small></div><ChevronDown size={15}/></button></div></header>
-      <div className="team-body"><section className="team-heading"><div><p>TEAM</p><h1>All OM Employees</h1><span>A meeting-friendly view of the team’s OM calendar context. Personal calendar items are never shown.</span></div><aside><strong>{employees.length}</strong><span>OM employees</span><small>Representative directory</small></aside></section>
+  return <div className="team-body"><section className="team-heading"><div><p>TEAM</p><h1>All OM Employees</h1><span>A meeting-friendly view of the team’s OM calendar context. Personal calendar items are never shown.</span></div><aside><strong>{employees.length}</strong><span>OM employees</span><small>Representative directory</small></aside></section>
         <section className="team-toolbar" aria-label="Team directory controls"><div className="team-filters"><label>Department<select value={department} onChange={event=>setDepartment(event.target.value)}>{departments.map(item=><option key={item}>{item}</option>)}</select></label>{view==="column"&&<label>Group columns by<select value={group} onChange={event=>setGroup(event.target.value as GroupMode)}><option value="department">Department</option><option value="schedule">Today’s OM schedule</option></select></label>}</div><div className="team-view-switcher" aria-label="View"><button className={view==="card"?"active":""} onClick={()=>saveViewPreference("card")} aria-pressed={view==="card"}><LayoutGrid size={15}/>Cards</button><button className={view==="column"?"active":""} onClick={()=>saveViewPreference("column")} aria-pressed={view==="column"}><Columns3 size={15}/>Columns</button><button className={view==="list"?"active":""} onClick={()=>saveViewPreference("list")} aria-pressed={view==="list"}><List size={15}/>List</button></div></section>
         <div className="team-context-line"><span>{visibleEmployees.length} {visibleEmployees.length===1?"employee":"employees"}</span><small><CalendarDays size={12}/>Today’s event times use OM time · Eastern Time</small></div>
         {visibleEmployees.length===0?<section className="team-empty"><Users size={25}/><h2>No employees found</h2><p>Try another department or search.</p></section>:view==="card"?<section className="employee-grid">{visibleEmployees.map(employee=><EmployeeCard employee={employee} now={now} key={employee.name}/>)}</section>:view==="column"?<section className="team-columns">{groups.map(([label,items])=><div className="team-column" key={label}><header><span>{label}</span><b>{items.length}</b></header><div>{items.map(employee=><EmployeeCard employee={employee} now={now} compact key={employee.name}/>)}</div></div>)}</section>:<EmployeeList items={visibleEmployees} now={now}/>} 
-      </div>
-    </main>
-  </div>;
+      </div>;
 }

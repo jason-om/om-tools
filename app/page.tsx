@@ -1,15 +1,12 @@
 "use client";
+import { useShellModal } from "./shell";
+import { Provider, projects, type ProviderName } from "./shared";
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
+import { useState } from "react";
 import {
-  Bell, CalendarDays, ChevronDown, ChevronLeft, ChevronRight, CircleDot,
-  FileBarChart, FileStack, Grid2X2, Link2, Moon, MoreVertical, PlusSquare,
-  RefreshCw, Search, Settings, Sun, Users, Wrench, X,
+  CalendarDays, ChevronRight, CircleDot, MoreVertical, RefreshCw
 } from "lucide-react";
 
-type ProviderName = "asana" | "slack" | "google";
-type ModalName = "search" | "meeting" | "client" | "notifications" | "profile" | "sync" | "";
 type Horizon = "Day" | "Week" | "Month" | "Quarter" | "Year";
 type PlanningHorizon = Exclude<Horizon, "Day" | "Week">;
 type CapacityIntensity = "calm" | "steady" | "busy" | "heavy";
@@ -47,15 +44,6 @@ const mentions = [
   ["“Jason, see my comment below.”","#om-team · 6h"],
 ];
 
-const projects = [
-  ["W","Westwyn","2 overdue · Landing page due today","red"],
-  ["S","Sonterra","Feedback received · 1 task due tomorrow","orange"],
-  ["TP","The Practice","Client review today · No overdue work","green"],
-  ["AD","Aurora Dental","3 tasks due this week","purple"],
-  ["SG","Smile Group","No overdue work · On track","blue"],
-  ["RD","Redbud Dental","1 overdue · Report due tomorrow","red"],
-  ["PD","Peak Dental","Kickoff in 3 days · 2 tasks","green"],
-];
 
 const schedule = [
   ["9:00 AM","Design Sync","Google Meet","blue"],
@@ -111,10 +99,6 @@ const horizonViews:Record<PlanningHorizon,HorizonConfig> = {
   },
 };
 
-function Provider({ type }: { type: ProviderName }) {
-  return <span className={`provider-mark ${type}`} aria-label={type}>{type === "asana" ? "●●●" : type === "slack" ? "✣" : "31"}</span>;
-}
-
 function OpenLink({ label = "Open" }: { label?: string }) {
   return <a className="open-link" href="https://example.com" target="_blank" rel="noopener noreferrer">{label} ↗</a>;
 }
@@ -160,29 +144,10 @@ function WeekCalendar(){
 
 function WeekView(){return <div className="week-view"><section className="week-summary-grid"><CapacityRead intensity={weekCapacity.intensity} intensityLabel={weekCapacity.intensityLabel} title={weekCapacity.capacityTitle} copy={weekCapacity.capacityCopy} stats={weekCapacity.stats}/><Panel title="COMING DUE" icon={<CalendarDays size={16}/>} action="View all (9)"><WorkList/></Panel></section><WeekCalendar/></div>}
 
-function Modal({ name, close }: { name:ModalName; close:()=>void }) {
-  const content:Record<string,React.ReactNode> = {
-    search:<><p className="modal-label">QUICK SEARCH</p><h2>Find anything across your work.</h2><div className="modal-search"><Search size={18}/><input placeholder="Client, campaign, person, or deliverable…"/></div><div className="quick-results"><small>RECENT</small><a href="https://example.com" target="_blank" rel="noopener noreferrer"><Provider type="asana"/>Aurora launch checklist <span>↗</span></a><a href="https://example.com" target="_blank" rel="noopener noreferrer"><Provider type="slack"/>#westwyn-web <span>↗</span></a></div></>,
-    meeting:<><p className="modal-label">SCHEDULE</p><h2>Finish scheduling in Google.</h2><p>OM One stays read-only. Create or change the meeting in its source.</p><a className="modal-primary" href="https://calendar.google.com" target="_blank" rel="noopener noreferrer"><CalendarDays size={17}/> Open Google Calendar ↗</a></>,
-    client:<><p className="modal-label">CLIENTS</p><h2>Jump to a client.</h2><div className="client-choices">{projects.slice(0,5).map(p=><a href="https://example.com" target="_blank" rel="noopener noreferrer" key={p[1]}><span className={`client-mark ${p[3]}`}>{p[0]}</span>{p[1]}<ChevronRight size={15}/></a>)}</div></>,
-    notifications:<><p className="modal-label">NOTIFICATIONS</p><h2>The short list.</h2><div className="notification-line"><i className="red"/><div><b>Homepage revisions are overdue</b><small>Westwyn · 18m ago</small></div></div><div className="notification-line"><i className="purple"/><div><b>Sarah mentioned you</b><small>Sonterra · 24m ago</small></div></div><div className="notification-line"><i className="green"/><div><b>All connections are healthy</b><small>Synced 4m ago</small></div></div></>,
-    profile:<><div className="modal-profile"><span>JM</span><div><h2>Jason M.</h2><p>IC Workspace · Verified account</p></div></div><a className="profile-action" href="/auth">Manage authentication <ChevronRight size={15}/></a><a className="profile-action" href="/admin/access">Access requests <ChevronRight size={15}/></a></>,
-    sync:<><p className="modal-label">CONNECTIONS</p><h2>Everything is in step.</h2>{[["google","Google Calendar"],["asana","Asana"],["slack","Slack"]].map(([p,n])=><div className="sync-row" key={p}><Provider type={p as ProviderName}/><div><b>{n}</b><small>Healthy · read-only</small></div><em>Synced</em></div>)}<button className="sync-now-button" type="button"><RefreshCw size={15}/>Sync now</button></>,
-  };
-  return <div className="modal-overlay"><section className="dashboard-modal"><button className="modal-close" onClick={close} aria-label="Close"><X size={18}/></button>{content[name]}</section></div>;
-}
-
 export default function Home(){
-  const [dark,setDark]=useState(false); const [collapsed,setCollapsed]=useState(false); const [horizon,setHorizon]=useState<Horizon>("Day"); const [modal,setModal]=useState<ModalName>("");
-  useEffect(()=>{document.documentElement.dataset.theme=dark?"dark":"light"},[dark]);
-  useEffect(()=>{const onKey=(e:KeyboardEvent)=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="k"){e.preventDefault();setModal("search")}if(e.key==="Escape")setModal("")};window.addEventListener("keydown",onKey);return()=>window.removeEventListener("keydown",onKey)},[]);
-  return <div className={`om-dashboard ${collapsed?"sidebar-collapsed":""}`}>
-    <aside className="om-sidebar"><div className="om-brand"><Image className="logo-light" src="/om-logo-light.svg" alt="OM" width={44} height={30}/><Image className="logo-dark" src="/om-logo-dark.svg" alt="OM" width={44} height={30}/><span>OM One</span></div><nav>
-      <a className="active" href="/"><Grid2X2/><span>Overview</span></a><a href="/clients"><Users/><span>Clients</span></a><a href="/team"><Users/><span>Team</span></a><a href="/tools"><Wrench/><span>Tools</span></a><a className="nav-coming" href="#reports" aria-disabled="true" onClick={e=>e.preventDefault()}><FileBarChart/><span>Reports</span><em>Coming Soon</em></a><a className="nav-coming" href="#resources" aria-disabled="true" onClick={e=>e.preventDefault()}><FileStack/><span>Resources</span><em>Coming Soon</em></a>
-      <p>MANAGE</p><a className="nav-coming" href="#requests" aria-disabled="true" onClick={e=>e.preventDefault()}><PlusSquare/><span>Requests</span><em>Coming Soon</em></a><p>SETTINGS</p><a className="nav-coming" href="#integrations" aria-disabled="true" onClick={e=>e.preventDefault()}><Link2/><span>Integrations</span><em>Coming Soon</em></a><a className="nav-coming" href="#settings" aria-disabled="true" onClick={e=>e.preventDefault()}><Settings/><span>Settings</span><em>Coming Soon</em></a>
-    </nav><div className="sidebar-profile"><span className="profile-photo">JM</span><div><b>Jason M.</b><small>View profile →</small></div></div><button className="collapse-button" onClick={()=>setCollapsed(!collapsed)} aria-label="Collapse sidebar"><ChevronLeft size={19}/></button></aside>
-    <main className="om-main"><header className="om-topbar"><button className="top-search" onClick={()=>setModal("search")}><Search size={20}/><span>Search anything…</span><kbd>⌘K</kbd></button><div className="top-actions"><button className="round-button" onClick={()=>setDark(!dark)} aria-label="Toggle theme">{dark?<Sun size={19}/>:<Moon size={19}/>}</button><button onClick={()=>setModal("meeting")}><CalendarDays size={18}/>Meeting</button><button onClick={()=>setModal("client")}><Users size={18}/>Client</button><button className="notification-button" onClick={()=>setModal("notifications")} aria-label="Notifications"><Bell size={20}/><i>3</i></button><button className="top-profile" onClick={()=>setModal("profile")}><span>JM</span><div><b>Jason M.</b><small>IC Workspace</small></div><ChevronDown size={15}/></button></div></header>
-      <div className="dashboard-body"><section className="greeting"><div><p>Monday, August 24</p><h1>Good morning, Jason <span>👋</span></h1><small>Here’s what needs your attention today.</small></div><div className="horizon-tabs">{(["Day","Week","Month","Quarter","Year"] as Horizon[]).map(h=><button className={horizon===h?"active":""} onClick={()=>setHorizon(h)} key={h}><span>{h}</span></button>)}</div></section>
+  const [horizon,setHorizon]=useState<Horizon>("Day");
+  const openModal=useShellModal();
+  return <div className="dashboard-body"><section className="greeting"><div><p>Monday, August 24</p><h1>Good morning, Jason <span>👋</span></h1><small>Here’s what needs your attention today.</small></div><div className="horizon-tabs">{(["Day","Week","Month","Quarter","Year"] as Horizon[]).map(h=><button className={horizon===h?"active":""} onClick={()=>setHorizon(h)} key={h}><span>{h}</span></button>)}</div></section>
       {horizon==="Day"?<div className="day-grid">
         <Panel title="NEEDS YOU" icon={<span className="panel-icon red"><CircleDot size={15}/></span>} action="View all (10)" className="needs-panel"><WorkList/></Panel>
         <Panel title="NAME MENTIONS" icon={<span className="panel-icon purple">@</span>} action="View all (12)" className="mentions-panel"><Mentions/></Panel>
@@ -191,9 +156,7 @@ export default function Home(){
         <Panel title="LATER / QUIETER" icon={<span className="plain-icon">◷</span>} action="View all (14)" className="quiet-panel"><div className="quiet-list">{quietItems.map(([title,due])=><a href="https://example.com" target="_blank" rel="noopener noreferrer" key={title}><Provider type="asana"/><div><b>{title}</b><small>Asana · {due}</small></div><ChevronRight size={15}/></a>)}<button className="more-row">＋ 9 more items</button></div></Panel>
         <Panel title="UPCOMING THIS WEEK" icon={<span className="plain-icon">▣</span>} className="upcoming-panel"><div className="upcoming-list">{[["TUE","Aug 25","Sonterra ad creative due","Due tomorrow","orange"],["WED","Aug 26","Aurora Dental monthly report","Due in 2 days",""],["THU","Aug 27","Westwyn launch review","In 3 days","blue"],["FRI","Aug 28","Sonterra campaign launch","In 4 days","blue"]].map(r=><a href="https://example.com" target="_blank" rel="noopener noreferrer" key={r[0]}><time><b>{r[0]}</b><small>{r[1]}</small></time><div><b>{r[2]}</b><small>{r[0]==="THU"?"Google Calendar · 2:00 PM":r[0]==="FRI"?"Google Calendar · 11:00 AM":"Asana"}</small></div><em className={r[4]}>{r[3]}</em><ChevronRight size={15}/></a>)}<button className="more-row">＋ 6 more deadlines & events</button></div></Panel>
         <div className="focus-card"><span className="focus-icon">▣</span><h2>Focus on what matters</h2><p>You’re all clear for now. Nice work staying on top of things!</p><div className="focus-wave"/></div>
-        <div className="sync-bar"><Provider type="google"/><i/><Provider type="asana"/><i/><Provider type="slack"/><i/><button className="sync-status-button" type="button" onClick={()=>setModal("sync")}><span>Last synced 4m ago</span><RefreshCw size={15}/></button></div>
+        <div className="sync-bar"><Provider type="google"/><i/><Provider type="asana"/><i/><Provider type="slack"/><i/><button className="sync-status-button" type="button" onClick={()=>openModal("sync")}><span>Last synced 4m ago</span><RefreshCw size={15}/></button></div>
       </div>:horizon==="Week"?<WeekView/>:<PlanningView horizon={horizon}/>} 
       </div>
-    </main>{modal&&<Modal name={modal} close={()=>setModal("")}/>} 
-  </div>
 }
