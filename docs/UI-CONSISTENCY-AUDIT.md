@@ -660,3 +660,51 @@ Lint, `tsc --noEmit`, 6/6 tests. Zero overflowing elements and no horizontal
 scroll, light and dark. Both `.secondary` groups confirmed to receive the
 treatment. Comparison measured from computed styles per element, main against
 rail.
+
+
+---
+
+# Container-relative hierarchy on /team (2026-08-24)
+
+Same fault as `/clients`, in one case worse.
+
+## Employee card
+
+**"Today's OM calendar" was 14/700 — larger *and* heavier than the 13/600 event
+titles it labels.** The section header was the loudest thing in its own
+container. It now matches the eyebrow pattern already used correctly by "OM DAY
+AT A GLANCE" in the same card: 10/800 muted uppercase, with its "3 events"
+counter dropping to the same 10px step.
+
+The card ladder now descends cleanly:
+
+| | Role | Was | Now |
+|---|---|---|---|
+| 1 | Person name | 18/700 | 18/700 |
+| 2 | Event title | 13/600 | 13/600 |
+| 3 | Glance note | 14/400 | **13/400** |
+| 4 | Role | 14/400 | **13/400** |
+| 5 | Department pill | 12/700 | **12/600** |
+| 6 | Event time | 12/500 | 12/500 |
+| 7 | Timezone value | 12/700 | **12/600** |
+| — | Both eyebrows | 10/700 and 10/800 | **10/800** — they sit at the same level in the same card, so they now match |
+
+## List view
+
+`.list-events time` was cobalt at weight 700 in a fixed **60px** box. At that
+weight "12:00 PM" overflows 60px, so the timestamp ran straight into the event
+title — "12:00 PMClient success working session". It is now muted at 500 in a
+66px box with 6px of padding, which fixes the collision and the inversion in
+one change.
+
+## Left alone
+
+Column headers in the Columns view are 14/800 with a 13/700 count badge, which
+already matches the group-heading pattern on `/clients`. Consistent, so
+unchanged.
+
+## Verification
+
+Lint, `tsc --noEmit`, 6/6 tests. Cards, Columns and List views checked in light
+and dark: zero overflowing elements, no horizontal scroll, rendered steps
+[10, 12, 13, 14, 16, 32]. Brace balance verified.
