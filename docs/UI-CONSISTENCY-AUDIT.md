@@ -708,3 +708,48 @@ unchanged.
 Lint, `tsc --noEmit`, 6/6 tests. Cards, Columns and List views checked in light
 and dark: zero overflowing elements, no horizontal scroll, rendered steps
 [10, 12, 13, 14, 16, 32]. Brace balance verified.
+
+
+---
+
+# Team spacing and grouping (2026-08-24)
+
+Two follow-ups on `/team` that hierarchy alone did not fix — both were spacing
+faults, not size faults.
+
+## Calendar time column was wrapping
+
+`.om-events>div` used a fixed **60px** time column with `white-space:normal`.
+At 12px, "10:00 AM" is wider than 60px, so it broke onto two lines — visible in
+the Columns view, where it pushed the row to double height.
+
+Fixed by making the time `white-space:nowrap`, widening the column to 64px,
+and raising the gap from 7px to 10px so the time and title stop touching. The
+narrow-column variant went from 55px to the same 64px, since it had the same
+problem worse. Times also get `font-variant-numeric:tabular-nums` so they align
+vertically down a card rather than jittering with digit width.
+
+15 time labels checked across Cards, Columns and List: **none wrap**.
+
+## Timezone blocks had no grouping
+
+Both timezone treatments presented as one undifferentiated run of lines.
+
+**Card view** — `.avatar-times` used a uniform 4px gap with both the time and
+its zone label at 12px, so four lines read as one block. Now: the value stays
+12/600, the zone label drops to the 10px micro step, the pair tightens to 2px,
+and the gap *between* the two pairs opens to 8px. The two times now read as two
+things.
+
+**List view** — the markup is `span(time + "local")`, `small(zone)`,
+`span(time + "OM")`. With a uniform 3px gap, the zone label sat equidistant
+between the two times despite belonging to the first. It now has 5px of
+bottom margin, binding it to the local time and separating the OM row. The
+"local" / "OM" suffixes drop to muted 12px and the values take 600 weight, so
+the number leads rather than the qualifier.
+
+## Verification
+
+Lint, `tsc --noEmit`, 6/6 tests. Cards, Columns and List checked in light and
+dark: zero overflowing elements, no horizontal scroll, no wrapped time labels,
+rendered steps [10, 12, 13, 14, 16, 32]. Brace balance verified.
