@@ -1088,3 +1088,56 @@ three repaired and re-verified.
 Lint, `tsc --noEmit`, 6/6 tests. All pages at 1440, 1250, 950 and 680 in light
 and dark; all five Overview horizons; both overflow axes checked. Zero
 overflowing elements, no horizontal scroll.
+
+
+---
+
+# Collaborator avatars on client cards (2026-08-24)
+
+The card footer showed a static line, "Relationship context from Asana", on
+every client — the same words regardless of client, so it carried no
+information. Replaced with a stack of overlapping collaborator marks.
+
+- 22px circles, initials from the collaborator name ("Maya C." → "MC"),
+  overlapping by 7px, each ringed in `--om-surface` so the ring follows the
+  theme.
+- Colours reuse the existing `.client-identity-mark` palette. The tone rules
+  are now grouped (`.client-identity-mark.coral,.collab-avatar.coral{…}`) so
+  there is one hex per tone, not two.
+- Appears in the grid card, the expanded card, and both My Clients and OM
+  Clients scopes — all four render from the same `ClientCard` footer.
+- `aria-label` lists the collaborators in full and each mark carries a `title`,
+  so the information is not colour- or initials-only.
+
+All 8 clients already had collaborators in `clientExpansionDetails`; no data
+was invented.
+
+## Two corrections worth recording
+
+**First**, I twice concluded Westwyn and Sonterra had no collaborators. They
+do. My extraction regex assumed quoted object keys (`"Aurora Dental":`), but
+those two are written as bare identifiers (`Westwyn:`). Checking the rendered
+page rather than trusting the regex is what caught it.
+
+**Second, and more serious**, removing the now-dead `.client-card>footer small`
+rules re-created the selector-fusion bug from the heading consolidation. The
+string `.client-card>footer small{display:none}` was not a whole rule — it was
+a *substring* of `.client-group.secondary .client-card>footer small{display:none}`.
+Removing it left the orphaned prefix fused onto the next selector, producing
+`.client-group.secondary .client-group.secondary .asana-link`, which can never
+match. That silently reverted the FYI rail's de-emphasised Asana link back to
+full main-card styling.
+
+Brace balance was 0 and lint was clean throughout. The check that actually
+finds this is scanning each selector for a **repeated class token**, which is
+the signature of a fused prefix. That scan now reports clean everywhere except
+one genuinely pre-existing case, `.employee-card.compact .employee-card.compact
+.schedule-note` in `team.css`, which is dead but left alone — repairing it
+would change compact card styling that has never been applied.
+
+## Verification
+
+Lint, `tsc --noEmit`, 6/6 tests. Grid, expanded, My Clients and OM Clients in
+light and dark: 8 stacks render, the old string is gone from the UI, zero
+overflow, no horizontal scroll. Rail and main-card Asana links confirmed to
+have their distinct treatments again (22px/500 vs 29px/600).
