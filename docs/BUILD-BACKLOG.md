@@ -76,6 +76,33 @@ Requests is marked Coming Soon in the primary sidebar; the authentication and su
 - Per-IC Google, Slack, and Asana OAuth connections and scope transparency.
 - Superadmin connector policy, feature flags, role assignment, retention policy, and audit log.
 
+## 11. Design system and platform debt
+
+Carried over from `docs/UI-CONSISTENCY-AUDIT.md`, which has the evidence for
+each item.
+
+- **Move the app shell into `app/layout.tsx`.** The sidebar and topbar are
+  duplicated across all four dashboard pages, and `dark` / `collapsed` are
+  per-page `useState` with no persistence. Toggling dark mode and navigating
+  drops you back to light. One change resolves audit findings 2, 3, and 4:
+  the reset theme, the `⌘K` hint that only works on Overview, and the
+  notification and profile buttons that are inert on Clients, Team, and Tools.
+- **Close the dark-mode gaps.** `team.css` hardcodes 15 colours and has zero
+  `[data-theme=dark]` overrides; the `.focus-card` on Overview still renders
+  light in dark mode. Audit finding 8.
+- **Move `nitro` off beta.** It is pinned to `3.0.260610-beta` and pulls an
+  alpha `unstorage`, whose optional peer dependency on `lru-cache` is what
+  makes `npm ci` fail on npm 10. Only used on the Vercel build path. Revisit
+  when nitro 3 ships stable, then drop the npm 11 pin in CI if it holds.
+- **Agree a type and radius scale.** Audit finding 14 — 23 distinct font sizes
+  in `globals.css` alone, and eleven border radii. Partially addressed by the
+  sitewide type bump, but the set of allowed values is still unbounded.
+- **Remaining audit findings.** 5 (Overview header off-system), 6 (`tools.css`
+  overriding `globals.css` at equal specificity), 9 (no focus rings in the
+  shared shell), 10 (three identical heading blocks), 11 (12 classes with no
+  CSS), 12 (breakpoints diverging above 980px), 13 (one icon for two nav
+  destinations, inconsistent view-switcher labels).
+
 ## Recommended sequence
 
 1. Production auth, database, and Google Calendar connector.
@@ -86,3 +113,7 @@ Requests is marked Coming Soon in the primary sidebar; the authentication and su
 6. Resources and Reports.
 7. Month, Quarter, and Year horizons.
 8. Broader Tools platform and additional approved connectors.
+
+Design system debt (section 11) is not sequenced here — the shell move is
+worth doing before the dashboard pages grow further, since every new page
+copies the shell again.

@@ -286,7 +286,9 @@ new classes, or markup restructuring.
     remove the affordances until they are real.
 11. Decide whether `.greeting` should adopt the `.*-heading` pattern.
 12. Collapse the three heading blocks into one shared selector.
-13. Agree a type and radius scale and round the outliers onto it.
+13. Agree a type and radius scale and round the outliers onto it. Partially
+    addressed — see "Sitewide type bump" below — but the set of allowed values
+    is still unbounded.
 
 
 ---
@@ -361,3 +363,41 @@ legacy palette values.
 
 The `.focus-card` on Overview still renders light in dark mode. That is
 finding 8 (uneven dark coverage), not a regression from this work.
+
+
+---
+
+# Sitewide type bump (2026-08-24)
+
+Every `font-size` and the size inside every `font:` shorthand, across all four
+stylesheets, multiplied by **1.10** and rounded to the nearest 0.5px. Widths,
+heights, padding, radii, and letter-spacing were not touched, so the layout
+grid is unchanged and only the text inside it grew.
+
+Body copy moves 9px → 10px and 10px → 11px; the largest headings move 29px →
+32px. Relative hierarchy is preserved because every value scaled by the same
+factor.
+
+## One deliberate exception
+
+`.panel-title h2` and `.dash-panel>header button` were held at their original
+10px. At 1.10 they became 11px, which pushed "TODAY'S SCHEDULE" and its "View
+calendar" link onto two lines inside the fixed 48px panel header. The dashboard
+panel header is the one place in the layout with no horizontal slack. Holding
+the panel chrome at its original size while the panel *content* grows keeps
+every header on one line.
+
+Note that "CLIENT / PROJECT PULSE" still wraps to two lines. That is
+pre-existing, not a result of this change — measured at 20px tall on the
+original stylesheets too.
+
+## Why 1.10 rather than more
+
+1.15 was tried first and rejected: it wrapped the panel headers even with the
+exception above, and truncated more of the client pulse rows.
+
+## Verification
+
+Lint, `tsc --noEmit`, and 6/6 render tests pass. All six pages checked at
+1440x900 and 680x900 in light and dark. A DOM sweep at 680px found no element
+overflowing its container and no horizontal page scroll.

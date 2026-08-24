@@ -8,7 +8,7 @@
 .bento-grid .tool-card:not(.tool-rank-0) .tool-card-copy{margin:10px 0 5px}
 .tool-card-link{position:relative;color:inherit;text-decoration:none;cursor:pointer}
 .tool-card-link:focus-visible{outline:2px solid var(--om-cobalt);outline-offset:2px}
-.tool-hover-tip{position:absolute;left:50%;top:50%;min-height:30px;padding:0 10px;border:1px solid color-mix(in srgb,var(--om-cobalt) 22%,var(--om-border));border-radius:7px;background:var(--om-surface);box-shadow:0 6px 18px rgba(13,33,50,.13);color:var(--om-cobalt);display:flex;align-items:center;gap:6px;font-size:9px;font-weight:700;white-space:nowrap;opacity:0;pointer-events:none;transform:translate(-50%,-38%);transition:opacity .15s ease,transform .15s ease}
+.tool-hover-tip{position:absolute;left:50%;top:50%;min-height:30px;padding:0 10px;border:1px solid color-mix(in srgb,var(--om-cobalt) 22%,var(--om-border));border-radius:7px;background:var(--om-surface);box-shadow:0 6px 18px rgba(13,33,50,.13);color:var(--om-cobalt);display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;white-space:nowrap;opacity:0;pointer-events:none;transform:translate(-50%,-38%);transition:opacity .15s ease,transform .15s ease}
 .tool-card-link:hover .tool-card-bottom .tool-meta,.tool-card-link:focus-visible .tool-card-bottom .tool-meta{opacity:0;transform:translateY(3px)}
 .tool-card-link:hover .tool-hover-tip,.tool-card-link:focus-visible .tool-hover-tip{opacity:1;transform:translate(-50%,-50%)}
 
