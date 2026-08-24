@@ -64,6 +64,27 @@ carries that colour, and do not add a near-duplicate of a colour that already
 exists. One deliberate exception: `#fff` stays literal on the dark-blue
 surfaces, because `--om-surface` inverts in dark mode.
 
+**Use the type scale.** Font sizes come from a fixed 8-step scale, with three
+extra display steps used only by the auth page:
+
+| Step | Use |
+|---|---|
+| 12px | Floor. Uppercase chrome labels, meta lines, badges, pills, `dt` |
+| 13px | Captions, secondary meta |
+| 14px | Body, item titles, control labels, nav links |
+| 16px | Page subtitles, search inputs, lead body |
+| 18px | Card titles |
+| 21px | Sub-headings |
+| 26px | Stat numbers, modal titles |
+| 32px | Page `h1` |
+| 40 / 48 / 56px | Auth display type only |
+
+**12px is the floor for anything a person reads.** The only values below it are
+the `.provider-mark` glyphs (`●●●` and similar), which are icons sized to their
+box, not type. Do not add a new size — pick the nearest step. If none fits, the
+question is whether the element's role is right, not whether the scale needs a
+14.5px.
+
 **Reuse existing classes.** Before adding a class, check whether one already
 does the job. `.clients-heading`, `.team-heading`, and `.tools-heading` are a
 cautionary example — three byte-identical blocks under three names in three

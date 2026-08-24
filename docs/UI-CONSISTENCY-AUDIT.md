@@ -401,3 +401,67 @@ exception above, and truncated more of the client pulse rows.
 Lint, `tsc --noEmit`, and 6/6 render tests pass. All six pages checked at
 1440x900 and 680x900 in light and dark. A DOM sweep at 680px found no element
 overflowing its container and no horizontal page scroll.
+
+
+---
+
+# Type scale (2026-08-24)
+
+Supersedes the 10% bump above. Audit finding 14 is now closed.
+
+## The scale
+
+**12, 13, 14, 16, 18, 21, 26, 32**, plus **40 / 48 / 56** for auth display type.
+33 distinct sizes collapsed onto 11 steps. 12px is the floor for anything a
+person reads.
+
+Role assignment: 12 chrome labels, meta, badges; 13 captions; 14 body, item
+titles, nav, controls; 16 page subtitles and search inputs; 18 card titles;
+21 sub-headings; 26 stat numbers and modal titles; 32 page `h1`.
+
+Small text grew ~40% (a 9px meta line is now 13px); large text barely moved.
+The ratio between largest and smallest went from 10x to 2.7x, which is the
+point — 5.5px was never a legible step below 9px, it was noise.
+
+## Overview header now matches
+
+`.greeting h1` went 26px to 32px and its eyebrow to 12px, so every page title
+is now the same size. This closes audit finding 5.
+
+## Layout changes the scale required
+
+Bigger text does not fit a layout drawn for 5.5px type. These are the containers
+that had to move, all verified by measurement rather than eyeballing:
+
+- **Panel headers.** `.dash-panel>header button` gets `white-space:nowrap` and
+  `flex:0 0 auto` so "View calendar" stops breaking across two lines. The long
+  titles still wrap, as "CLIENT / PROJECT PULSE" always did.
+- **Client chips.** `.item-context` now wraps at desktop, not only under 680px,
+  and `.item-context>strong` no longer shrinks. Before this, flex was squeezing
+  "Westwyn" down to "Wes...". The meta line wraps to a second row instead.
+- **Sidebar 204px to 236px**, and `.om-sidebar nav>a` wraps, so the "COMING
+  SOON" badges sit under their labels. At 12px the badge plus label needed
+  256px, and widening the rail that far would have cost the content area.
+- **Team avatar times** stack the time over the zone (`.avatar-times>span`
+  becomes a column). They were a flex row needing 110px in a 72px column.
+- **Tools card meta** uses `repeat(auto-fit,minmax(66px,1fr))` so it drops to
+  two columns rather than truncating "OM DevTeam" to "OM DevTe...".
+
+## Deliberate exceptions
+
+`.provider-mark` glyphs stay at 5.5-18.5px. They are icons ("●●●"), not text,
+and the 12px floor made them overflow their 15px boxes. Their original values
+were restored exactly.
+
+Two `<small>` elements on `/admin/access` had no explicit size and were
+inheriting the browser's 0.833 scaling down to 11.67px, under the floor. They
+now have explicit sizes.
+
+## Verification
+
+Lint, `tsc --noEmit`, 6/6 render tests. Every page swept at 1440x900 and
+680x900 in light and dark, checking each element for content overflow:
+**zero overflowing elements** and no horizontal page scroll anywhere. Rendered
+font sizes on every page fall on the scale, minimum 12px for text. The only
+`scrollWidth` overhang left is `.collapse-button`, which is deliberately
+`translateX(100%)` outside the rail and unchanged from before.
