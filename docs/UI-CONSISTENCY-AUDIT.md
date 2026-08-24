@@ -465,3 +465,63 @@ Lint, `tsc --noEmit`, 6/6 render tests. Every page swept at 1440x900 and
 font sizes on every page fall on the scale, minimum 12px for text. The only
 `scrollWidth` overhang left is `.collapse-button`, which is deliberately
 `translateX(100%)` outside the rail and unchanged from before.
+
+
+---
+
+# Visual hierarchy pass (2026-08-24)
+
+The type scale made every size consistent but left weight and colour doing
+whatever they had been doing. Several roles were actively inverted: a
+timestamp rendered heavier than the item it described.
+
+## The rule applied
+
+**Colour is earned by interaction or status. Identity and metadata carry by
+weight instead.** Cobalt had been doing double duty — client names *and*
+links — so neither read as meaningful.
+
+Each row now descends cleanly through size, then weight, then colour:
+
+| Tier | Role | Size / weight / colour |
+|---|---|---|
+| 1 | Task or event title | 14 / 700 / `--om-text` |
+| 2 | Client identity | 12 / 600 / `--om-text` on `--om-soft` |
+| 3 | Time | 12 / 500 / `--om-muted` |
+| 4 | Source app | 12 / 400 / `--om-muted` |
+| — | Status pill | 12 / 400 / semantic |
+| — | Action link | 12 / 600 / cobalt |
+
+## Inversions corrected
+
+- **`.item-time` was `--om-text` at weight 600** — identical weight to the task
+  title beside it. Now muted at 500.
+- **Client chips were cobalt on a cobalt tint.** Now `--om-text` at 600 on
+  `--om-soft`. Client colour still comes from the `.client-mark` avatar, which
+  is where identity colour belongs.
+- **`/clients` glance rows: the timestamp was 12px/700 cobalt while its own
+  item title was 13px/700 dark.** The date was outranking the task. Timestamp
+  is now muted at 500.
+- **`/team` event rows were worse: time at 12px/700 cobalt against a title at
+  13px/400.** Time is now muted at 500 and the title moved up to 600.
+- **`.work-item .open-link` was a filled cobalt chip on every row** — six per
+  panel, competing with the content. The fill and border are now transparent
+  and appear on hover; the text stays cobalt because it is genuinely the
+  interactive element.
+- Action links normalised to 12/600 across all three pages (`.asana-link` and
+  `.slack-dm` were 13/700).
+- Tertiary labels dropped from 700/800 to 500/600: stat captions, tool meta
+  values, department pills, the HIGH PRIORITY label.
+
+## What deliberately kept its colour
+
+Status pills — Overdue red, Due today amber, In 42 min blue, Mention purple —
+and the Client Pulse status lines. These encode state, which is what colour is
+for. They dropped from 13px to 12px so they sit in the meta tier rather than
+competing with titles.
+
+## Verification
+
+Lint, `tsc --noEmit`, 6/6 tests. Zero overflowing elements and no horizontal
+scroll on any page. Hierarchy confirmed by reading computed styles per role
+rather than by eye.
