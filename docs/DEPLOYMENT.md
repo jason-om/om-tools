@@ -14,12 +14,21 @@ Vercel needs no dashboard configuration beyond connecting the repo —
 
 ```json
 {
+  "framework": null,
   "installCommand": "npm install -g npm@11 && npm ci",
   "buildCommand": "npm run build:vercel"
 }
 ```
 
-Two things about that file are load-bearing:
+Three things about that file are load-bearing:
+
+- **`"framework": null` is required.** This repo has `next.config.ts`, `next-env.d.ts`
+  and an `app/` router directory, so Vercel auto-detects it as Next.js — then fails
+  the build immediately with *"No Next.js version detected. Make sure your
+  package.json has `next` in either dependencies or devDependencies."* The app does
+  not use `next`; it uses **`vinext`**, a Next-compatible runtime. `null` means "no
+  framework preset", so Vercel just runs the commands above. Do not delete
+  `next.config.ts` to work around this — `vinext` reads it.
 
 - **No `outputDirectory`.** `npm run build:vercel` runs Vite with the Nitro
   plugin (`vite.config.ts` switches to it when `process.env.VERCEL` is set),
