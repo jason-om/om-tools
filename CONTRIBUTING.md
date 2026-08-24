@@ -64,12 +64,14 @@ carries that colour, and do not add a near-duplicate of a colour that already
 exists. One deliberate exception: `#fff` stays literal on the dark-blue
 surfaces, because `--om-surface` inverts in dark mode.
 
-**Use the type scale.** Font sizes come from a fixed 8-step scale, with three
-extra display steps used only by the auth page:
+**Use the type scale.** Font sizes come from a fixed scale, with three extra
+display steps used only by the auth page:
 
 | Step | Use |
 |---|---|
-| 12px | Floor. Uppercase chrome labels, meta lines, badges, pills, `dt` |
+| 8px | Decorative status chrome only — the nav "COMING SOON" badge |
+| 10px | Scan-once detail: uppercase eyebrows, table column headers, `dt` keys, stat captions |
+| 12px | Meta a person actually reads: times, client names, source apps, status pills, panel titles |
 | 13px | Captions, secondary meta |
 | 14px | Body, item titles, control labels, nav links |
 | 16px | Page subtitles, search inputs, lead body |
@@ -79,11 +81,30 @@ extra display steps used only by the auth page:
 | 32px | Page `h1` |
 | 40 / 48 / 56px | Auth display type only |
 
-**12px is the floor for anything a person reads.** The only values below it are
-the `.provider-mark` glyphs (`●●●` and similar), which are icons sized to their
-box, not type. Do not add a new size — pick the nearest step. If none fits, the
-question is whether the element's role is right, not whether the scale needs a
-14.5px.
+**12px is the floor for anything read in sequence.** 8px and 10px exist so
+incidental chrome can recede instead of competing — a label you scan once and
+never return to does not need the same size as content. If you reach for 8 or
+10, be able to say why the detail is incidental. The `.provider-mark` glyphs
+(`●●●` and similar) sit below the scale entirely; they are icons sized to their
+box, not type.
+
+Do not add a new size — pick the nearest step. If none fits, the question is
+whether the element's role is right, not whether the scale needs a 14.5px.
+
+**Hierarchy: colour is earned by interaction or status.** Identity and metadata
+carry by weight instead. Cobalt means "you can click this". Semantic red, amber,
+blue and purple mean "this is the state". Everything else uses `--om-text` and
+`--om-muted` at descending weights. A row should descend cleanly through size,
+then weight, then colour:
+
+| Tier | Role | Size / weight / colour |
+|---|---|---|
+| 1 | Task or event title | 14 / 700 / `--om-text` |
+| 2 | Client identity | 12 / 600 / `--om-text` |
+| 3 | Time | 12 / 500 / `--om-muted` |
+| 4 | Source app | 12 / 400 / `--om-muted` |
+
+Never let a timestamp render heavier than the item it describes.
 
 **Reuse existing classes.** Before adding a class, check whether one already
 does the job. `.clients-heading`, `.team-heading`, and `.tools-heading` are a

@@ -525,3 +525,42 @@ competing with titles.
 Lint, `tsc --noEmit`, 6/6 tests. Zero overflowing elements and no horizontal
 scroll on any page. Hierarchy confirmed by reading computed styles per role
 rather than by eye.
+
+
+---
+
+# Micro steps: 8px and 10px (2026-08-24)
+
+A hard 12px floor flattened hierarchy from the other direction — incidental
+chrome was forced up to compete with content. Two steps added below the floor.
+
+## Revised scale
+
+**8, 10, 12, 13, 14, 16, 18, 21, 26, 32** (+ 40/48/56 auth display).
+
+- **8px** — decorative status chrome only. Currently just the nav "COMING SOON"
+  badge.
+- **10px** — scan-once detail: uppercase eyebrows ("MY CLIENT WORK", "HIGH
+  PRIORITY", "OM DAY AT A GLANCE", "RECENT ASANA ACTIVITY"), table column
+  headers, `dt` keys ("Author", "Updated", "Opens"), stat captions ("Due
+  today"), sidebar section labels ("MANAGE", "SETTINGS").
+- **12px stays the floor for anything read in sequence** — times, client names,
+  source apps, status pills, panel titles.
+
+20 selectors moved to 10px, 1 to 8px.
+
+## The sidebar accommodation is undone
+
+The 12px "COMING SOON" badge was the reason the sidebar went to 236px with
+wrapping nav links. At 8px the badge fits inline again, so both were reverted:
+nav links are back to single 43px rows, and the rail is **228px** — still wider
+than the original 204px, because "Integrations" plus badge needs 194px against
+171px of inner width at 204px, but 8px narrower than the workaround required.
+
+## Verification
+
+Lint, `tsc --noEmit`, 6/6 tests. Zero overflowing elements and no horizontal
+scroll on any page at 1440x900 or 680x900, light and dark. Rendered steps per
+page now read [8, 10, 12, 13, 14, 16, 26] on the dashboard and
+[10, 12, 13, 14, 16, 18, 32] on the list pages. CSS brace balance verified
+after each scripted edit.
