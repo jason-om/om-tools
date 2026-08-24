@@ -159,6 +159,76 @@ hybrid model:
 - Embedding Asana interfaces
 - Slack or calendar data
 
+## 13. User Profile (next dev cycle)
+
+**Title:** Build the User Profile view
+
+A profile that answers "who is this person, and what are they on right now?"
+without becoming a productivity dashboard.
+
+### Entry points that already exist
+
+- The topbar avatar opens a profile modal (`app/shell.tsx`) with two actions:
+  Manage authentication (`/auth`) and Access requests (`/admin/access`).
+- The sidebar shows "View profile →" — but it is a plain `<div>` with no link
+  or handler, so it currently does nothing. This work should make it real or
+  remove the affordance.
+- There is no `/profile` route yet.
+
+### What the profile reveals
+
+**Identity and company details**
+- Name, initials mark, role/title, department
+- Work email
+- OM workspace and account status (the modal already shows
+  "IC Workspace · Verified account")
+- Time zone, reusing the pattern on the team card
+
+**Today**
+- Today's meetings — same source and row treatment as the team card's OM
+  calendar
+- Today's due tasks — same treatment as the team card's due Asana tasks
+
+**Projects**
+- Projects the person is connected to, each with the **number of tasks
+  assigned**
+- Per project, show only **Due today** and **Due this week** in detail
+- Everything beyond this week is a **summary at project level** — counts and
+  status, not task lists
+
+### Rules
+
+- **Horizon is deliberately short.** Only Due Today and Due This Week are
+  itemised. Anything further out is summarised per project. The profile is a
+  current-state view, not a backlog.
+- **Every in-depth path is an external link.** Task and project detail open in
+  Asana in a new tab (`target="_blank" rel="noopener noreferrer"`). OM One stays
+  read-only and never re-implements Asana's detail views.
+- **No monitoring-style metrics.** Task counts are availability context, the
+  same as the team card's load label. Do not add completion rates, throughput,
+  overdue streaks, or anything that reads as performance measurement. See the
+  same rule in section 12.
+- **Follow the existing design system** — the 8/10/12/13/14/16/18/21/26/32 type
+  scale and the hierarchy rules in `CONTRIBUTING.md`, and the container-relative
+  hierarchy findings in `docs/UI-CONSISTENCY-AUDIT.md`. A section label must
+  never render as strongly as the content it labels.
+- **Reuse before adding.** The person head, timezone footer, calendar rows, due
+  task rows and load pill all exist on the team card; the collaborator mark
+  stack exists on client cards.
+
+### Open questions
+
+- Is this only the signed-in user's own profile, or can you open a teammate's?
+  The team card is already the teammate view, so the answer changes whether
+  this is one route or two.
+- Does it live at `/profile`, or expand the existing modal?
+
+### Out of scope for this version
+
+- Editing profile or account details
+- Permissions and role administration (that is `/admin/access`)
+- Anything requiring write access to Asana, Slack or Google
+
 ## Recommended sequence
 
 1. Production auth, database, and Google Calendar connector.
