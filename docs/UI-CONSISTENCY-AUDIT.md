@@ -1013,3 +1013,78 @@ all 6 modals, ⌘K on all four pages, Escape-to-close, 5 horizon tabs, theme
 toggle, sidebar collapse, and each page's own view switches, filters, sorts and
 search. `/auth` and `/admin/access` confirmed shell-free in both themes. Zero
 overflow, no horizontal scroll.
+
+
+---
+
+# Remaining findings closed: 6, 9, 10, 11, 12, 13 (2026-08-24)
+
+These were never in scope of an instruction — the original audit was read-only
+and each later change was scoped to a specific request — so they sat in the
+backlog. Closing them now.
+
+## Finding 6 — silent specificity collisions
+
+Four declarations in `globals.css` were fully overridden by `tools.css` and
+never applied: `.bento-grid{grid-auto-rows:164px}`,
+`.tool-meta{grid-template-columns:1fr 1fr}`, and two whole rules
+(`display:none` on non-hero tool meta, `margin-bottom:auto` on its copy).
+Deleted, so each property has one source of truth. A property-level check now
+reports **0 declarations shadowed** across the two files.
+
+## Finding 9 — no focus ring in the shared shell
+
+`globals.css` and `team.css` had none. Both now carry the same ring
+`tools.css` already used (`2px solid var(--om-cobalt)`, 2px offset), covering
+sidebar nav, collapse button, topbar controls, horizon tabs, panel actions,
+open links, modal controls, and Team's Slack/view/filter controls. Verified on
+a nav link: `outline: 2px solid rgb(6, 69, 245)`.
+
+## Finding 10 — three identical heading blocks
+
+Eight rule groups were duplicated across `.clients-heading`, `.team-heading`
+and `.tools-heading`; six were byte-identical and two differed only by property
+order and a `min-width`. Now one grouped block in `globals.css`, with only the
+stat aside width (190 / 174 / 164px) left in each page stylesheet.
+
+## Finding 11 — classes with no CSS
+
+**Only 3 of the 8 candidates were genuinely dead.** My first pass scanned only
+top-level selectors and so missed classes defined *inside* `@media` blocks —
+`.pulse-panel`, `.schedule-panel` and the three `*-dashboard` wrappers are all
+used there for responsive grid placement. Removing them broke the Tools
+toolbar. Restored. Removed for real: `needs-panel`, `mentions-panel`,
+`list-client-detail`.
+
+## Finding 12 — breakpoint ladder
+
+Was 680 / 900 / 980 / 1200 / 1280 depending on the file. Now **680 / 980 /
+1280** everywhere, plus an 800px block in `globals.css` that belongs solely to
+the auth and superadmin layouts. Aligned upward (1200 → 1280, 900 → 980) so
+layouts reflow earlier rather than later. Verified no overflow at 1250px and
+950px, the two widths whose behaviour changed.
+
+## Finding 13 — icon and label collisions
+
+- Clients and Team shared the `Users` nav icon. Clients now uses `Building2`.
+- `LayoutGrid` meant "Cards" on Clients and Team but "Grid" on Tools, where
+  "Cards" used `Rows3`. Tools' bento view now uses `LayoutDashboard`, so
+  `LayoutGrid` means "Cards" and `List` means "List" everywhere.
+- `tools-top-search` renamed `tools-search`, matching `clients-search` and
+  `team-search`.
+
+## A mistake worth recording
+
+The finding-10 consolidation removed rule *bodies* but left their selector
+text, which fused onto the following selector — producing
+`.tools-heading…small.tools-toolbar{…}` and silently killing
+`.tools-toolbar`, `.client-scope-switcher` and `.team-toolbar`. Brace balance
+stayed 0, so the usual check passed. **A brace check does not catch a corrupted
+selector**; the CSS was only revealed as broken by looking at the page. All
+three repaired and re-verified.
+
+## Verification
+
+Lint, `tsc --noEmit`, 6/6 tests. All pages at 1440, 1250, 950 and 680 in light
+and dark; all five Overview horizons; both overflow axes checked. Zero
+overflowing elements, no horizontal scroll.

@@ -149,8 +149,8 @@ export default function Home(){
   const openModal=useShellModal();
   return <div className="dashboard-body"><section className="greeting"><div><p>Monday, August 24</p><h1>Good morning, Jason <span>👋</span></h1><small>Here’s what needs your attention today.</small></div><div className="horizon-tabs">{(["Day","Week","Month","Quarter","Year"] as Horizon[]).map(h=><button className={horizon===h?"active":""} onClick={()=>setHorizon(h)} key={h}><span>{h}</span></button>)}</div></section>
       {horizon==="Day"?<div className="day-grid">
-        <Panel title="NEEDS YOU" icon={<span className="panel-icon red"><CircleDot size={15}/></span>} action="View all (10)" className="needs-panel"><WorkList/></Panel>
-        <Panel title="NAME MENTIONS" icon={<span className="panel-icon purple">@</span>} action="View all (12)" className="mentions-panel"><Mentions/></Panel>
+        <Panel title="NEEDS YOU" icon={<span className="panel-icon red"><CircleDot size={15}/></span>} action="View all (10)"><WorkList/></Panel>
+        <Panel title="NAME MENTIONS" icon={<span className="panel-icon purple">@</span>} action="View all (12)"><Mentions/></Panel>
         <Panel title="CLIENT / PROJECT PULSE" icon={<span className="panel-icon green">⌁</span>} action="View all (10)" className="pulse-panel"><ProjectPulse/></Panel>
         <Panel title="TODAY’S SCHEDULE" icon={<span className="panel-icon blue"><CalendarDays size={14}/></span>} action="View calendar ↗" className="schedule-panel"><Schedule/></Panel>
         <Panel title="LATER / QUIETER" icon={<span className="plain-icon">◷</span>} action="View all (14)" className="quiet-panel"><div className="quiet-list">{quietItems.map(([title,due])=><a href="https://example.com" target="_blank" rel="noopener noreferrer" key={title}><Provider type="asana"/><div><b>{title}</b><small>Asana · {due}</small></div><ChevronRight size={15}/></a>)}<button className="more-row">＋ 9 more items</button></div></Panel>

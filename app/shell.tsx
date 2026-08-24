@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { Bell, CalendarDays, ChevronDown, ChevronLeft, ChevronRight, FileBarChart, FileStack, Grid2X2, Link2, Moon, PlusSquare, RefreshCw, Search, Settings, Sun, Users, Wrench, X } from "lucide-react";
+import { Bell, Building2, CalendarDays, ChevronDown, ChevronLeft, ChevronRight, FileBarChart, FileStack, Grid2X2, Link2, Moon, PlusSquare, RefreshCw, Search, Settings, Sun, Users, Wrench, X } from "lucide-react";
 import { Provider, projects, type ProviderName } from "./shared";
 
 type ModalName = "search" | "meeting" | "client" | "notifications" | "profile" | "sync" | "";
@@ -15,13 +15,7 @@ const BARE_ROUTES = ["/auth", "/admin/access"];
 const SEARCH_BY_ROUTE: Record<string, { className: string; placeholder: string }> = {
   "/clients": { className: "clients-search", placeholder: "Search clients, owners, or projects…" },
   "/team": { className: "team-search", placeholder: "Search the OM team…" },
-  "/tools": { className: "tools-top-search", placeholder: "Search tools…" },
-};
-
-const WRAPPER_BY_ROUTE: Record<string, string> = {
-  "/clients": "clients-dashboard",
-  "/team": "team-dashboard",
-  "/tools": "tools-dashboard",
+  "/tools": { className: "tools-search", placeholder: "Search tools…" },
 };
 
 const PREFS_EVENT = "om-prefs";
@@ -43,9 +37,16 @@ function writePref(key: string, value: string) {
 
 const serverFalse = () => false;
 
+/** Page-scoped wrapper classes; each page stylesheet targets its own. */
+const WRAPPER_BY_ROUTE: Record<string, string> = {
+  "/clients": "clients-dashboard",
+  "/team": "team-dashboard",
+  "/tools": "tools-dashboard",
+};
+
 const NAV = [
   { href: "/", label: "Overview", icon: Grid2X2 },
-  { href: "/clients", label: "Clients", icon: Users },
+  { href: "/clients", label: "Clients", icon: Building2 },
   { href: "/team", label: "Team", icon: Users },
   { href: "/tools", label: "Tools", icon: Wrench },
 ];
