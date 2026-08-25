@@ -112,7 +112,10 @@ function ServiceCoverage({client,expanded}:{client:Client;expanded:boolean}){
   const label=`Service coverage: ${active.map(pillar=>pillar.name).join(", ")||"none"}`;
   if(!expanded) return <div className="service-strip" aria-label={label}>{servicePillars.map(pillar=>{const on=client.services.includes(pillar.key);return <span className={`service-chip ${pillar.tone} ${on?"on":"off"}`} key={pillar.key} title={`${pillar.name}${on?"":" — not engaged"}`}>{pillar.step}</span>})}<small>{active.length} of {servicePillars.length}</small></div>;
   return <section className="service-coverage" aria-label={label}>
-    <header><span>WHAT WE RUN FOR THIS CLIENT</span><small>{active.length} of {servicePillars.length} channels</small></header>
+    <header>
+      <div><span>WHAT WE DO AT A GLANCE</span><h2>Multi-channel marketing <em>done right.</em></h2><p>Executed for every client, every time.</p></div>
+      <small>{active.length} of {servicePillars.length} channels</small>
+    </header>
     <div>{servicePillars.map(pillar=>{const on=client.services.includes(pillar.key);return <article className={`${pillar.tone} ${on?"on":"off"}`} key={pillar.key}><b>{pillar.step}</b><div><strong>{pillar.name}</strong><p>{pillar.detail}</p></div>{!on&&<em>Not engaged</em>}</article>})}</div>
   </section>;
 }

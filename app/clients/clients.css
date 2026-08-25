@@ -36,6 +36,9 @@
 .service-chip.seo,article.seo{--pillar:var(--om-magenta)}
 .service-chip.reporting,article.reporting{--pillar:var(--om-red)}
 article.foundation{--pillar:var(--om-dark-blue)}
+/* Foundation's navy is the "base" colour in light, but it disappears against the
+   dark surface. Remap to a neutral that stays distinct from the other five. */
+[data-theme=dark] .service-chip.foundation,[data-theme=dark] article.foundation{--pillar:var(--om-grey-c5)}
 
 .service-strip{display:flex;align-items:center;gap:5px;margin-bottom:2px}
 .service-chip{width:20px;height:20px;flex:0 0 auto;border-radius:5px;display:grid;place-items:center;font-size:10px;font-weight:800}
@@ -44,9 +47,13 @@ article.foundation{--pillar:var(--om-dark-blue)}
 .service-strip>small{margin-left:4px;color:var(--om-muted);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 
 .service-coverage{border:1px solid var(--om-border);border-radius:10px;background:var(--om-surface);padding:12px 13px}
-.service-coverage>header{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:9px}
-.service-coverage>header>span{color:var(--om-muted);font-size:10px;font-weight:800;letter-spacing:.08em}
-.service-coverage>header>small{color:var(--om-muted);font-size:10px}
+.service-coverage>header{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:12px}
+.service-coverage>header>div{min-width:0}
+.service-coverage>header span{display:block;color:var(--om-sky-blue);font-size:10px;font-weight:800;letter-spacing:.14em}
+.service-coverage>header h2{margin:6px 0 4px;font:700 21px/1.1 var(--font-headline);letter-spacing:-.02em;color:var(--om-text);text-transform:uppercase}
+.service-coverage>header h2 em{font-style:normal;color:var(--om-orange)}
+.service-coverage>header p{margin:0;color:var(--om-muted);font-size:12px}
+.service-coverage>header>small{flex:0 0 auto;color:var(--om-muted);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
 .service-coverage>div{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .service-coverage article{position:relative;min-width:0;padding:9px 10px 10px;border-radius:8px;background:var(--om-soft);border-top:3px solid var(--pillar);display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:start}
 .service-coverage article.off{opacity:.55}
