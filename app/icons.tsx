@@ -67,3 +67,98 @@ export function CommandCenterIcon(props: IconProps) {
     </Frame>
   );
 }
+
+/* ---- Interface icons ------------------------------------------------- */
+
+function Ui({ size = 16, children }: IconProps & { children: React.ReactNode }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      {children}
+    </svg>
+  );
+}
+
+export function SearchIcon(props: IconProps) {
+  return (
+    <Ui {...props}>
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
+    </Ui>
+  );
+}
+
+export function GridViewIcon(props: IconProps) {
+  return (
+    <Ui {...props}>
+      <rect x="3" y="3" width="9" height="12" rx="1.5" />
+      <rect x="15" y="3" width="6" height="6" rx="1.5" />
+      <rect x="15" y="12" width="6" height="9" rx="1.5" />
+      <rect x="3" y="18" width="9" height="3" rx="1.5" />
+    </Ui>
+  );
+}
+
+export function CardsViewIcon(props: IconProps) {
+  return (
+    <Ui {...props}>
+      <rect x="3" y="3" width="8" height="8" rx="1.5" />
+      <rect x="13" y="3" width="8" height="8" rx="1.5" />
+      <rect x="3" y="13" width="8" height="8" rx="1.5" />
+      <rect x="13" y="13" width="8" height="8" rx="1.5" />
+    </Ui>
+  );
+}
+
+export function ListViewIcon(props: IconProps) {
+  return (
+    <Ui {...props}>
+      <path d="M8 6h13M8 12h13M8 18h13" />
+      <path d="M3.5 6h.01M3.5 12h.01M3.5 18h.01" />
+    </Ui>
+  );
+}
+
+export function ArrowUpRightIcon(props: IconProps) {
+  return (
+    <Ui {...props}>
+      <path d="M7 17 17 7" />
+      <path d="M8 7h9v9" />
+    </Ui>
+  );
+}
+
+export function SunIcon(props: IconProps) {
+  return (
+    <Ui {...props}>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5M17.5 17.5 19 19M19 5l-1.5 1.5M6.5 17.5 5 19" />
+    </Ui>
+  );
+}
+
+export function MoonIcon(props: IconProps) {
+  return (
+    <Ui {...props}>
+      <path d="M20 13.5A8.5 8.5 0 1 1 10.5 4a6.6 6.6 0 0 0 9.5 9.5Z" />
+    </Ui>
+  );
+}
+
+export function WrenchIcon(props: IconProps) {
+  return (
+    <Ui {...props}>
+      <path d="M15.5 3a5.5 5.5 0 0 0-4.9 8L3 18.6 5.4 21l7.6-7.6a5.5 5.5 0 0 0 6.5-8.1l-3.1 3.1-2.8-2.8L16.7 3a5.6 5.6 0 0 0-1.2 0Z" />
+    </Ui>
+  );
+}

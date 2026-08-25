@@ -16,14 +16,27 @@ Replaces the generic directory previously hosted at
 | Deploys | https://deploys.omdigitalagency.com/ |
 | OM Tools / Command Center | https://tools.omdigitalagency.com/login |
 
+## The page
+
+One route. A search box and a light/dark toggle, the heading, then a toolbar
+carrying the Department filter, the sort control, and the Grid / Cards / List
+view switcher. Grid is a bento that reflows by result count so a filtered view
+never leaves a hole.
+
+Theme follows the OS until someone picks a side; the choice is stored in
+`localStorage` under `om-theme` and applied before first paint by the inline
+bootstrap in `app/theme.tsx`, so there is no flash on reload.
+
 ## Adding a tool
 
 1. Add an icon to `app/icons.tsx` — a 64×64 viewBox drawn with `currentColor`
    strokes, so the card tints the whole glyph with one CSS colour.
 2. Add an entry to the `tools` array in `app/page.tsx` with a `tone` of
-   `coral`, `blue`, `purple`, or `green`.
+   `coral`, `blue`, `purple`, or `green`. Array order is the "Featured" sort and
+   decides which tool gets the large bento tile.
 
-That is the entire change surface. No routing, no data layer.
+Departments come from the entries themselves, so a new one appears in the filter
+automatically. That is the entire change surface — no routing, no data layer.
 
 ## Local development
 
@@ -47,9 +60,10 @@ npm run dev     # http://localhost:3000
 
 ```
 app/
-  layout.tsx    document shell, metadata, brand fonts
-  page.tsx      the dashboard — tool list and cards
-  icons.tsx     inline SVG tool marks
+  layout.tsx    document shell, metadata, brand fonts, theme bootstrap
+  page.tsx      the dashboard — tool list, filters, and the three views
+  icons.tsx     inline SVG tool marks and interface icons
+  theme.tsx     light/dark toggle and its pre-paint bootstrap
   globals.css   the entire stylesheet
 worker/
   index.ts      Cloudflare Worker entry
