@@ -1,0 +1,900 @@
+/* OM Tools Dashboard — the whole stylesheet for the whole app. */
+
+:root {
+  --om-dark-blue: #0d2132;
+  --om-sky-blue: #46c3fc;
+  --om-cobalt: #0645f5;
+  --om-purple: #7054f5;
+
+  --om-page: #fbfcff;
+  --om-surface: #fff;
+  --om-text: #0d2132;
+  --om-muted: #58677d;
+  --om-border: #dfe5ef;
+  --om-soft: #f5f7fb;
+  --om-shadow: 0 2px 7px rgba(13, 33, 50, 0.045);
+
+  --font-headline: "Archivo", Arial, sans-serif;
+  --font-body: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* `data-theme` is stamped before first paint from the stored choice, falling
+ * back to the OS preference. Both are defined so either can win. */
+[data-theme="dark"] {
+  --om-page: #0a1420;
+  --om-surface: #101f2d;
+  --om-text: #f5f8fc;
+  --om-muted: #9eb0c4;
+  --om-border: #26394b;
+  --om-soft: #152636;
+  --om-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--om-page);
+  color: var(--om-text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+/* ---- Page frame ------------------------------------------------------ */
+
+.tools-body {
+  max-width: 1700px;
+  margin: 0 auto;
+  padding: 20px 24px 48px;
+}
+
+.tools-topbar {
+  height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.top-search {
+  width: min(455px, 40vw);
+  height: 43px;
+  border: 0;
+  border-radius: 11px;
+  background: linear-gradient(
+    90deg,
+    var(--om-soft),
+    color-mix(in srgb, var(--om-soft) 50%, transparent)
+  );
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 0 17px;
+  color: var(--om-muted);
+  cursor: text;
+}
+
+.top-search input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--om-text);
+  font-size: 16px;
+}
+
+.top-search input::placeholder {
+  color: var(--om-muted);
+}
+
+.theme-toggle {
+  width: 43px;
+  height: 43px;
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 50%;
+  background: var(--om-soft);
+  color: var(--om-text);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  color: var(--om-cobalt);
+}
+
+/* ---- Heading -------------------------------------------------------- */
+
+.tools-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 28px;
+  padding-bottom: 27px;
+}
+
+.tools-heading > div > p {
+  margin: 0 0 9px;
+  color: var(--om-cobalt);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.tools-heading h1 {
+  margin: 0 0 8px;
+  font: 700 32px/1 var(--font-headline);
+  letter-spacing: -0.03em;
+}
+
+.tools-heading > div > span {
+  color: var(--om-muted);
+  font-size: 16px;
+}
+
+.tools-heading > aside {
+  min-width: 164px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  gap: 2px 8px;
+  padding: 12px 15px;
+  border: 1px solid var(--om-border);
+  border-radius: 9px;
+  background: var(--om-surface);
+  box-shadow: var(--om-shadow);
+}
+
+.tools-heading > aside strong {
+  grid-row: 1 / span 2;
+  font: 700 32px/1 var(--font-headline);
+  color: var(--om-cobalt);
+}
+
+.tools-heading > aside span {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.tools-heading > aside small {
+  font-size: 10px;
+  color: var(--om-muted);
+}
+
+/* ---- Toolbar: filters, sort, view switcher --------------------------- */
+
+.tools-toolbar {
+  min-height: 62px;
+  padding: 9px 10px 9px 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border: 1px solid var(--om-border);
+  border-radius: 10px;
+  background: var(--om-surface);
+  box-shadow: var(--om-shadow);
+}
+
+.tool-filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tool-filter label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--om-muted);
+  white-space: nowrap;
+}
+
+.tool-filter select {
+  height: 38px;
+  min-width: 158px;
+  padding: 0 31px 0 11px;
+  border: 1px solid var(--om-border);
+  border-radius: 7px;
+  background: var(--om-soft);
+  color: var(--om-text);
+  font-size: 14px;
+  outline: none;
+}
+
+.view-switcher {
+  display: flex;
+  gap: 3px;
+  padding: 3px;
+  border-radius: 8px;
+  background: var(--om-soft);
+}
+
+.view-switcher button {
+  height: 32px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--om-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.view-switcher button.active {
+  background: var(--om-surface);
+  color: var(--om-cobalt);
+  box-shadow: 0 1px 4px rgba(13, 33, 50, 0.1);
+}
+
+.tools-results-line {
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tools-results-line span {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.tools-results-line small {
+  color: var(--om-muted);
+  font-size: 13px;
+}
+
+/* ---- Collections ---------------------------------------------------- */
+
+.tools-collection {
+  display: grid;
+  gap: 12px;
+}
+
+.bento-grid {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-auto-rows: 218px;
+}
+
+.bento-grid .tool-rank-0 {
+  grid-column: span 6;
+  grid-row: span 2;
+}
+
+.bento-grid .tool-rank-1,
+.bento-grid .tool-rank-2,
+.bento-grid .tool-rank-3,
+.bento-grid .tool-rank-4,
+.bento-grid .tool-rank-5 {
+  grid-column: span 3;
+}
+
+/* Fewer than five cards cannot fill the 6+3+3 / 6+3+3 bento, so the tail cards
+ * widen to close the gap. Placed explicitly: auto-placement will not backtrack
+ * into the slot the featured card leaves free on the second row. */
+.bento-grid[data-count="1"] .tool-rank-0 {
+  grid-column: span 12;
+  grid-row: span 1;
+}
+
+.bento-grid[data-count="2"] .tool-rank-1 {
+  grid-column: 7 / span 6;
+  grid-row: 1 / span 2;
+}
+
+.bento-grid[data-count="3"] .tool-rank-1 {
+  grid-column: 7 / span 6;
+  grid-row: 1;
+}
+
+.bento-grid[data-count="3"] .tool-rank-2,
+.bento-grid[data-count="4"] .tool-rank-3 {
+  grid-column: 7 / span 6;
+  grid-row: 2;
+}
+
+.card-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.tool-card {
+  min-width: 0;
+  padding: 17px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--om-border);
+  border-radius: 10px;
+  background: var(--om-surface);
+  box-shadow: var(--om-shadow);
+  overflow: hidden;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.tool-card:hover {
+  border-color: color-mix(in srgb, var(--om-cobalt) 30%, var(--om-border));
+  transform: translateY(-1px);
+}
+
+.tool-card-link {
+  position: relative;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.tool-card-link:focus-visible {
+  outline: 2px solid var(--om-cobalt);
+  outline-offset: 2px;
+}
+
+.tool-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.tool-mark {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+}
+
+.tool-mark svg {
+  width: 20px;
+  height: 20px;
+}
+
+.tool-mark.coral {
+  background: #f05f68;
+}
+.tool-mark.blue {
+  background: #287ce8;
+}
+.tool-mark.purple {
+  background: #6c4bdc;
+}
+.tool-mark.green {
+  background: #1b9b6a;
+}
+
+.department-pill {
+  max-width: 55%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: var(--om-soft);
+  color: var(--om-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.tool-card-copy {
+  min-width: 0;
+  margin: 14px 0 12px;
+}
+
+.tool-card-copy h2 {
+  margin: 0 0 7px;
+  font: 700 18px/1.15 var(--font-headline);
+  letter-spacing: -0.01em;
+}
+
+.tool-card-copy p {
+  margin: 0;
+  color: var(--om-muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.tool-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(66px, 1fr));
+  gap: 10px;
+  margin: auto 0 0;
+}
+
+.tool-meta > div {
+  min-width: 0;
+}
+
+.tool-meta dt {
+  margin-bottom: 3px;
+  color: var(--om-muted);
+  font-size: 10px;
+}
+
+.tool-meta dd {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* The meta row swaps for an "Open tool" cue on hover. */
+.tool-card-bottom {
+  position: relative;
+  min-height: 31px;
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+}
+
+.tool-card-bottom .tool-meta {
+  width: 100%;
+  margin: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.tool-hover-tip {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid color-mix(in srgb, var(--om-cobalt) 22%, var(--om-border));
+  border-radius: 7px;
+  background: var(--om-surface);
+  box-shadow: 0 6px 18px rgba(13, 33, 50, 0.13);
+  color: var(--om-cobalt);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -38%);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.tool-card-link:hover .tool-card-bottom .tool-meta,
+.tool-card-link:focus-visible .tool-card-bottom .tool-meta {
+  opacity: 0;
+  transform: translateY(3px);
+}
+
+.tool-card-link:hover .tool-hover-tip,
+.tool-card-link:focus-visible .tool-hover-tip {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
+
+/* Featured bento tile. */
+.bento-grid .tool-rank-0 {
+  padding: 23px;
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--om-purple) 8%, var(--om-surface)),
+    var(--om-surface) 62%
+  );
+}
+
+.bento-grid .tool-rank-0 .tool-mark {
+  width: 44px;
+  height: 44px;
+}
+
+.bento-grid .tool-rank-0 .tool-mark svg {
+  width: 26px;
+  height: 26px;
+}
+
+.bento-grid .tool-rank-0 .tool-card-copy {
+  margin-top: 26px;
+  max-width: 590px;
+}
+
+.bento-grid .tool-rank-0 .tool-card-copy h2 {
+  font-size: 26px;
+}
+
+.bento-grid .tool-rank-0 .tool-card-copy p {
+  font-size: 16px;
+}
+
+.bento-grid .tool-rank-0 .tool-meta {
+  max-width: 350px;
+}
+
+.bento-grid .tool-card:not(.tool-rank-0) {
+  padding-bottom: 20px;
+}
+
+.bento-grid .tool-card:not(.tool-rank-0) .tool-card-copy {
+  margin: 10px 0 5px;
+}
+
+.bento-grid .tool-card:not(.tool-rank-0) .tool-card-copy p {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.bento-grid .tool-card:not(.tool-rank-0) .tool-meta {
+  display: grid;
+  gap: 6px;
+}
+
+/* ---- List view ------------------------------------------------------ */
+
+.tool-list {
+  border: 1px solid var(--om-border);
+  border-radius: 10px;
+  background: var(--om-surface);
+  box-shadow: var(--om-shadow);
+  overflow: hidden;
+}
+
+.tool-list > header,
+.tool-list > article {
+  display: grid;
+  grid-template-columns:
+    minmax(250px, 2fr) minmax(110px, 0.75fr)
+    minmax(100px, 0.7fr) minmax(150px, 1fr) 30px;
+  gap: 14px;
+  align-items: center;
+  padding: 0 14px;
+}
+
+.tool-list > header {
+  height: 36px;
+  background: var(--om-soft);
+  color: var(--om-muted);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.tool-list > article {
+  min-height: 64px;
+  border-top: 1px solid var(--om-border);
+  font-size: 14px;
+}
+
+.tool-list > article > div {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.tool-list > article > div > span {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tool-list > article b {
+  font-size: 14px;
+}
+
+.tool-list > article small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--om-muted);
+  font-size: 13px;
+}
+
+.tool-list > article > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--om-muted);
+}
+
+.tool-list > article > a {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  color: var(--om-cobalt);
+}
+
+.tool-list > article > a:focus-visible {
+  outline: 2px solid var(--om-cobalt);
+  outline-offset: 2px;
+}
+
+.tool-list .tool-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+}
+
+.tool-list .tool-mark svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ---- Empty state ---------------------------------------------------- */
+
+.tools-empty {
+  min-height: 310px;
+  border: 1px dashed var(--om-border);
+  border-radius: 10px;
+  background: var(--om-surface);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--om-muted);
+}
+
+.tools-empty h2 {
+  margin: 14px 0 5px;
+  font: 700 18px var(--font-headline);
+  color: var(--om-text);
+}
+
+.tools-empty p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* ---- Responsive ----------------------------------------------------- */
+
+@media (max-width: 1280px) {
+  .bento-grid {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+  .bento-grid .tool-rank-0 {
+    grid-column: span 4;
+  }
+  .bento-grid .tool-rank-1,
+  .bento-grid .tool-rank-2,
+  .bento-grid .tool-rank-3,
+  .bento-grid .tool-rank-4,
+  .bento-grid .tool-rank-5 {
+    grid-column: span 2;
+  }
+  .card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .tool-list > header,
+  .tool-list > article {
+    grid-template-columns: minmax(230px, 2fr) minmax(105px, 0.8fr) minmax(150px, 1fr) 30px;
+  }
+  .tool-list > header > span:nth-child(3),
+  .tool-list > article > span:nth-child(3) {
+    display: none;
+  }
+}
+
+@media (max-width: 980px) {
+  .tools-body {
+    padding: 16px 18px 42px;
+  }
+  .tools-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .tool-filter {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .tool-filter label {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .tool-filter select {
+    width: 100%;
+    min-width: 0;
+  }
+  .view-switcher {
+    align-self: flex-end;
+  }
+  .bento-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 172px;
+  }
+  .bento-grid .tool-rank-0 {
+    grid-column: span 2;
+  }
+  .bento-grid .tool-rank-1,
+  .bento-grid .tool-rank-2,
+  .bento-grid .tool-rank-3,
+  .bento-grid .tool-rank-4,
+  .bento-grid .tool-rank-5 {
+    grid-column: span 1;
+  }
+  .card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .tool-list {
+    overflow-x: auto;
+  }
+  .tool-list > header,
+  .tool-list > article {
+    min-width: 700px;
+  }
+}
+
+@media (max-width: 680px) {
+  .tools-body {
+    padding: 12px 12px 32px;
+  }
+  .top-search {
+    width: auto;
+    flex: 1;
+  }
+  .tools-heading {
+    align-items: flex-start;
+    padding-bottom: 20px;
+  }
+  .tools-heading h1 {
+    font-size: 26px;
+  }
+  .tools-heading > div > span {
+    display: block;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .tools-heading > aside {
+    display: none;
+  }
+  .tools-toolbar {
+    gap: 10px;
+    padding: 10px;
+  }
+  .tool-filter {
+    grid-template-columns: 1fr;
+  }
+  .view-switcher {
+    align-self: stretch;
+  }
+  .view-switcher button {
+    flex: 1;
+    justify-content: center;
+  }
+  .tools-results-line small {
+    display: none;
+  }
+  .bento-grid,
+  .card-grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+  }
+  .bento-grid .tool-rank-0,
+  .bento-grid .tool-rank-1,
+  .bento-grid .tool-rank-2,
+  .bento-grid .tool-rank-3,
+  .bento-grid .tool-rank-4,
+  .bento-grid .tool-rank-5 {
+    grid-column: auto;
+    grid-row: auto;
+  }
+  .tool-card,
+  .uniform-card,
+  .bento-grid .tool-rank-0 {
+    min-height: 215px;
+    padding: 17px;
+  }
+  .bento-grid .tool-rank-0 .tool-mark {
+    width: 34px;
+    height: 34px;
+  }
+  .bento-grid .tool-rank-0 .tool-mark svg {
+    width: 20px;
+    height: 20px;
+  }
+  .bento-grid .tool-rank-0 .tool-card-copy {
+    margin: 14px 0 12px;
+  }
+  .bento-grid .tool-rank-0 .tool-card-copy h2 {
+    font-size: 18px;
+  }
+  .bento-grid .tool-rank-0 .tool-card-copy p {
+    font-size: 14px;
+  }
+  .bento-grid .tool-card:not(.tool-rank-0) .tool-meta {
+    display: grid;
+  }
+  .tool-list > header,
+  .tool-list > article {
+    min-width: 635px;
+  }
+}
+
+@media (hover: none) {
+  .tool-hover-tip {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tool-card,
+  .tool-card-bottom .tool-meta,
+  .tool-hover-tip {
+    transition: none;
+  }
+  .tool-card:hover {
+    transform: none;
+  }
+}
+
+/* The narrower bento drops to two columns, so the count-based widening
+ * above must not leak past its breakpoint. */
+@media (max-width: 980px) {
+  .bento-grid[data-count="1"] .tool-rank-0,
+  .bento-grid[data-count="2"] .tool-rank-1,
+  .bento-grid[data-count="3"] .tool-rank-1,
+  .bento-grid[data-count="3"] .tool-rank-2,
+  .bento-grid[data-count="4"] .tool-rank-3 {
+    grid-column: span 2;
+    grid-row: auto;
+  }
+  .bento-grid[data-count="1"] .tool-rank-0 {
+    grid-row: span 1;
+  }
+}
+
+@media (max-width: 680px) {
+  .bento-grid[data-count] .tool-rank-0,
+  .bento-grid[data-count] .tool-rank-1,
+  .bento-grid[data-count] .tool-rank-2,
+  .bento-grid[data-count] .tool-rank-3 {
+    grid-column: auto;
+    grid-row: auto;
+  }
+}
+
+/* ---- No-JavaScript fallback ----------------------------------------- */
+
+.noscript-list {
+  padding: 20px 22px;
+  border: 1px solid var(--om-border);
+  border-radius: 10px;
+  background: var(--om-surface);
+  box-shadow: var(--om-shadow);
+}
+
+.noscript-list p {
+  margin: 0 0 12px;
+  color: var(--om-muted);
+  font-size: 14px;
+}
+
+.noscript-list ul {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+.noscript-list a {
+  color: var(--om-cobalt);
+  font-weight: 700;
+}
