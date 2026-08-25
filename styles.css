@@ -870,3 +870,31 @@ select {
     grid-row: auto;
   }
 }
+
+/* ---- No-JavaScript fallback ----------------------------------------- */
+
+.noscript-list {
+  padding: 20px 22px;
+  border: 1px solid var(--om-border);
+  border-radius: 10px;
+  background: var(--om-surface);
+  box-shadow: var(--om-shadow);
+}
+
+.noscript-list p {
+  margin: 0 0 12px;
+  color: var(--om-muted);
+  font-size: 14px;
+}
+
+.noscript-list ul {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+.noscript-list a {
+  color: var(--om-cobalt);
+  font-weight: 700;
+}

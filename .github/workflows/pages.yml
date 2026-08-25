@@ -1,0 +1,73 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# A newer push supersedes an in-flight publish.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v5
+
+      # There is no build to catch mistakes, so check the invariants that
+      # matter: the site files exist, and every tool link is present and
+      # opens in a new tab safely.
+      - name: Check the site
+        run: |
+          set -euo pipefail
+
+          for file in index.html styles.css app.js favicon.svg .nojekyll; do
+            test -f "$file" || { echo "::error::missing $file"; exit 1; }
+          done
+
+          grep -q 'rel="noopener noreferrer"' app.js \
+            || { echo "::error::app.js cards are missing rel=noopener noreferrer"; exit 1; }
+          grep -q 'target="_blank"' app.js \
+            || { echo "::error::app.js cards are missing target=_blank"; exit 1; }
+
+          for url in \
+            "https://convert-n-compress.om-devteam.workers.dev/" \
+            "https://dental-website-tracker.om-devteam.workers.dev/" \
+            "https://deploys.omdigitalagency.com/" \
+            "https://tools.omdigitalagency.com/login"; do
+            grep -qF "$url" app.js \
+              || { echo "::error::missing tool link $url"; exit 1; }
+            grep -qF "$url" index.html \
+              || { echo "::error::$url missing from the noscript list"; exit 1; }
+          done
+
+          echo "Site looks publishable."
+
+      # gh-pages is a published artifact, not history worth keeping, so each
+      # run replaces it with a single fresh commit.
+      - name: Publish to gh-pages
+        run: |
+          set -euo pipefail
+
+          mkdir "$RUNNER_TEMP/site"
+          cp index.html styles.css app.js favicon.svg \
+             om-logo-light.svg om-logo-dark.svg .nojekyll "$RUNNER_TEMP/site/"
+
+          cd "$RUNNER_TEMP/site"
+          git init -q -b gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Publish ${GITHUB_SHA:0:7}"
+          git push -q -f \
+            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

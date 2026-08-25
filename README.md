@@ -1,11 +1,11 @@
 # OM Tools Dashboard
 
 A single-page internal directory for tools built by the OM DevTeam. Every entry
-is an external link that opens in a new tab. There is no auth, no database, and
-no second route — the dashboard is the whole app.
+is an external link that opens in a new tab. Replaces the generic directory
+previously hosted at `om-app-directory.om-devteam.workers.dev`.
 
-Replaces the generic directory previously hosted at
-`om-app-directory.om-devteam.workers.dev`.
+No build step, no dependencies, no toolchain — three files served as-is by
+GitHub Pages.
 
 ## Tools listed
 
@@ -16,59 +16,78 @@ Replaces the generic directory previously hosted at
 | Deploys | https://deploys.omdigitalagency.com/ |
 | OM Tools / Command Center | https://tools.omdigitalagency.com/login |
 
-## The page
+## Branches
 
-One route. A search box and a light/dark toggle, the heading, then a toolbar
-carrying the Department filter, the sort control, and the Grid / Cards / List
-view switcher. Grid is a bento that reflows by result count so a filtered view
-never leaves a hole.
-
-Theme follows the OS until someone picks a side; the choice is stored in
-`localStorage` under `om-theme` and applied before first paint by the inline
-bootstrap in `app/theme.tsx`, so there is no flash on reload.
-
-## Adding a tool
-
-1. Add an icon to `app/icons.tsx` — a 64×64 viewBox drawn with `currentColor`
-   strokes, so the card tints the whole glyph with one CSS colour.
-2. Add an entry to the `tools` array in `app/page.tsx` with a `tone` of
-   `coral`, `blue`, `purple`, or `green`. Array order is the "Featured" sort and
-   decides which tool gets the large bento tile.
-
-Departments come from the entries themselves, so a new one appears in the filter
-automatically. That is the entire change surface — no routing, no data layer.
-
-## Local development
-
-```bash
-npm install
-npm run dev     # http://localhost:3000
-```
-
-## Scripts
-
-| Script | Purpose |
+| Branch | What it is |
 | --- | --- |
-| `npm run dev` | Local dev server (vinext + Cloudflare Vite plugin) |
-| `npm run build` | Production build |
-| `npm run build:vercel` | Vercel/Nitro build |
-| `npm start` | Serve the production build |
-| `npm test` | Build, then assert the server-rendered HTML and outbound links |
-| `npm run lint` | ESLint |
+| `main` | The site source. Edit here. |
+| `gh-pages` | Published output, replaced by CI on every push to `main`. Do not edit. |
+| `nextjs` | The earlier React + vinext/Cloudflare version, kept for reference. |
 
 ## Layout
 
 ```
-app/
-  layout.tsx    document shell, metadata, brand fonts, theme bootstrap
-  page.tsx      the dashboard — tool list, filters, and the three views
-  icons.tsx     inline SVG tool marks and interface icons
-  theme.tsx     light/dark toggle and its pre-paint bootstrap
-  globals.css   the entire stylesheet
-worker/
-  index.ts      Cloudflare Worker entry
-tests/
-  rendered-html.test.mjs
+index.html    the page — chrome, controls, and a <noscript> link list
+app.js        the tool list plus search, filters, sort, views, and theme
+styles.css    the design, light and dark
+favicon.svg   tab icon
+.nojekyll     tells Pages to serve the files untouched
 ```
 
-See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for deploy notes.
+## Adding a tool
+
+Edit the `TOOLS` array in `app.js` and push. That is the whole change surface.
+
+```js
+{
+  name: "Tool Name",
+  description: "One short line.",
+  department: "Creative",
+  author: "OM DevTeam",
+  url: "https://example.om-devteam.workers.dev/",
+  tone: "blue",        // coral | blue | purple | green
+  icon: "convert",     // a key in the ICONS map above
+}
+```
+
+- **Order matters.** The array order is the "Featured" sort, and the first entry
+  gets the large bento tile.
+- **Departments** are derived from the entries, so a new one appears in the
+  filter on its own.
+- **For a new icon**, add a key to the `ICONS` map: SVG path markup on a 64×64
+  viewBox using `currentColor` strokes, so the card tints the glyph with one
+  colour.
+- **Add the link to the `<noscript>` list** in `index.html` too, and to the URL
+  list in `.github/workflows/pages.yml` if it should be checked on deploy.
+
+## Local preview
+
+Any static server works, because there is nothing to compile:
+
+```bash
+npx --yes serve@14 --listen 4173 .
+```
+
+## How it renders
+
+`app.js` owns rendering: `TOOLS` is the single source of truth, and the cards,
+list rows, and empty state are all generated from it. `index.html` holds the
+static chrome and a `<noscript>` copy of the plain links so the page still
+functions with JavaScript off.
+
+The grid is a bento that reflows by result count, so a filtered view never
+leaves a hole. Theme follows the OS until someone picks a side; the choice is
+stored in `localStorage` under `om-theme` and applied before first paint by the
+inline script in `index.html`, so there is no flash on reload.
+
+## Deployment
+
+Pushing to `main` runs [`.github/workflows/pages.yml`](.github/workflows/pages.yml),
+which checks the site files and tool links, then force-pushes the static files
+to `gh-pages` as a single commit.
+
+Point Pages at the `gh-pages` branch, root folder, under **Settings → Pages**.
+
+> Note: GitHub Pages on a **private** repository requires a paid plan. On the
+> free plan, either make the repo public or host the same files elsewhere —
+> they are plain static files and need no special runtime.

@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OM Tools Dashboard</title>
+    <meta
+      name="description"
+      content="Internal apps and utilities built by the OM DevTeam."
+    />
+    <link rel="icon" href="favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Open+Sans:wght@400;600;700;800&display=swap"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      // Runs before first paint so a stored theme never flashes the wrong way.
+      // Kept in sync with readTheme() in app.js.
+      try {
+        var t = localStorage.getItem("om-theme");
+        document.documentElement.dataset.theme =
+          t === "dark" || t === "light"
+            ? t
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+      } catch (e) {}
+    </script>
+  </head>
+
+  <body>
+    <div class="tools-body">
+      <header class="tools-topbar">
+        <label class="top-search">
+          <svg
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.5-3.5" />
+          </svg>
+          <input id="search" placeholder="Search tools…" aria-label="Search tools" />
+        </label>
+        <button id="theme-toggle" class="theme-toggle" type="button"></button>
+      </header>
+
+      <section class="tools-heading">
+        <div>
+          <p>OM DEVTEAM</p>
+          <h1>Tools</h1>
+          <span>Internal apps and utilities created by the team.</span>
+        </div>
+        <aside>
+          <strong id="tool-total">0</strong>
+          <span>internal tools</span>
+          <small>All open in a new tab</small>
+        </aside>
+      </section>
+
+      <section class="tools-toolbar" aria-label="Tool controls">
+        <div class="tool-filter">
+          <label>
+            Department
+            <select id="department"></select>
+          </label>
+          <label>
+            Sort by
+            <select id="sort">
+              <option value="featured">Featured</option>
+              <option value="name">Name A–Z</option>
+              <option value="department">Department</option>
+            </select>
+          </label>
+        </div>
+        <div class="view-switcher" id="view-switcher" aria-label="View">
+          <button data-view="grid" class="active" aria-pressed="true">
+            <svg
+              viewBox="0 0 24 24"
+              width="15"
+              height="15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="3" y="3" width="9" height="12" rx="1.5" />
+              <rect x="15" y="3" width="6" height="6" rx="1.5" />
+              <rect x="15" y="12" width="6" height="9" rx="1.5" />
+              <rect x="3" y="18" width="9" height="3" rx="1.5" />
+            </svg>
+            <span>Grid</span>
+          </button>
+          <button data-view="cards" aria-pressed="false">
+            <svg
+              viewBox="0 0 24 24"
+              width="15"
+              height="15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="3" y="3" width="8" height="8" rx="1.5" />
+              <rect x="13" y="3" width="8" height="8" rx="1.5" />
+              <rect x="3" y="13" width="8" height="8" rx="1.5" />
+              <rect x="13" y="13" width="8" height="8" rx="1.5" />
+            </svg>
+            <span>Cards</span>
+          </button>
+          <button data-view="list" aria-pressed="false">
+            <svg
+              viewBox="0 0 24 24"
+              width="15"
+              height="15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <path d="M8 6h13M8 12h13M8 18h13" />
+              <path d="M3.5 6h.01M3.5 12h.01M3.5 18h.01" />
+            </svg>
+            <span>List</span>
+          </button>
+        </div>
+      </section>
+
+      <div class="tools-results-line">
+        <span id="result-count"></span>
+        <small id="result-note"></small>
+      </div>
+
+      <div id="collection"></div>
+
+      <noscript>
+        <section class="noscript-list">
+          <p>Enable JavaScript for search, filters, and views. The tools:</p>
+          <ul>
+            <li>
+              <a
+                href="https://convert-n-compress.om-devteam.workers.dev/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Convert &amp; Compress</a
+              >
+              — File conversion and compression utility.
+            </li>
+            <li>
+              <a
+                href="https://dental-website-tracker.om-devteam.workers.dev/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Dental Website Tracker</a
+              >
+              — Track and monitor dental practice websites.
+            </li>
+            <li>
+              <a
+                href="https://deploys.omdigitalagency.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Deploys</a
+              >
+              — Deployment dashboard and status overview.
+            </li>
+            <li>
+              <a
+                href="https://tools.omdigitalagency.com/login"
+                target="_blank"
+                rel="noopener noreferrer"
+                >OM Tools / Command Center</a
+              >
+              — Internal tools login / OM Performance Marketing Command Center.
+            </li>
+          </ul>
+        </section>
+      </noscript>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
