@@ -10,13 +10,22 @@ async function render(pathname) {
   }, { waitUntil() {}, passThroughOnException() {} });
 }
 
-for (const pathname of ["/", "/clients", "/team", "/tools", "/auth", "/admin/access"]) {
-  test(`server renders ${pathname}`, async () => {
-    const response = await render(pathname);
-    assert.equal(response.status, 200);
-    assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
-    const html = await response.text();
-    assert.match(html, /OM One/);
-    assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
-  });
-}
+test("server renders the tools dashboard", async () => {
+  const response = await render("/");
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
+  const html = await response.text();
+  assert.match(html, /OM Tools Dashboard/);
+  // Every tool must be an external link that opens in a new tab.
+  for (const url of [
+    "https://convert-n-compress.om-devteam.workers.dev/",
+    "https://dental-website-tracker.om-devteam.workers.dev/",
+    "https://deploys.omdigitalagency.com/",
+    "https://tools.omdigitalagency.com/login",
+  ]) {
+    assert.ok(html.includes(url), `missing tool link ${url}`);
+  }
+  assert.match(html, /target="_blank"/);
+  assert.match(html, /rel="noopener noreferrer"/);
+  assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
+});

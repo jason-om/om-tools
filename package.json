@@ -1,5 +1,5 @@
 {
-  "name": "om-one-v1",
+  "name": "om-tools-dashboard",
   "version": "0.1.0",
   "private": true,
   "engines": {
@@ -12,12 +12,9 @@
     "build:vercel": "vite build",
     "start": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext start",
     "test": "npm run build && node --test tests/rendered-html.test.mjs",
-    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
-    "db:generate": "drizzle-kit generate"
+    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next"
   },
   "dependencies": {
-    "drizzle-orm": "0.45.2",
-    "lucide-react": "^1.34.0",
     "nitro": "^3.0.260610-beta",
     "react": "19.2.6",
     "react-dom": "19.2.6"
@@ -34,7 +31,6 @@
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.2",
     "@vitejs/plugin-rsc": "0.5.26",
-    "drizzle-kit": "0.31.10",
     "eslint": "9.39.4",
     "eslint-plugin-jsx-a11y": "6.10.2",
     "eslint-plugin-react": "7.37.5",
@@ -48,5 +44,13 @@
     "vite": "8.0.13",
     "wrangler": "4.92.0"
   },
-  "type": "module"
+  "type": "module",
+  "allowScripts": {
+    "esbuild@0.18.20": true,
+    "esbuild@0.25.12": true,
+    "esbuild@0.28.0": true,
+    "esbuild@0.27.3": true,
+    "sharp@0.34.5": true,
+    "workerd@1.20260515.1": true
+  }
 }

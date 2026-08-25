@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import AppShell from "./shell";
 
 export const metadata: Metadata = {
-  title: "OM One — Your work, pulled into focus",
-  description: "An IC-first work secretary for Grow With OM.",
+  title: "OM Tools Dashboard",
+  description: "Internal apps and utilities built by the OM DevTeam.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
@@ -18,7 +17,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body><AppShell>{children}</AppShell></body>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=Open+Sans:wght@400;600&display=swap"
+        />
+      </head>
+      <body>{children}</body>
     </html>
   );
 }
